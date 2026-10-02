@@ -19,7 +19,8 @@ nearby devices on the same Wi-Fi network, without a cloud relay.
 - Designed for direct APK distribution and legacy Android devices.
 - The current target SDK does not meet Google Play's current target API
   requirements.
-- A real Android 2.3 / Galaxy Y device test is still required.
+- Tested on the latest Android version available at the time of testing and
+  Android 2.3 (API 9), the minimum supported version.
 
 ## Build
 
