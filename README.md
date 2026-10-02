@@ -37,9 +37,10 @@ From the repository root:
 ```
 
 Official signed releases are built by the maintainer. The release keystore and
-its passwords are private and must never be committed. Signed APKs are published
-as assets on the original repository's GitHub Releases page; APK build outputs
-are intentionally excluded from the source repository.
+its passwords are private and must never be committed. Each signed release APK,
+changelog, and checksum are archived under `releases/<version>/` and linked from
+the original repository's GitHub Releases page. Debug and unsigned build
+outputs are intentionally excluded from the source repository.
 
 ## Network and security
 
