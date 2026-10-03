@@ -16,8 +16,9 @@
 - License: GPL-3.0-or-later
 
 The APK is release-signed. The private keystore and signing passwords are not
-included. The app is tested on the latest Android version available at the time
-of testing and Android 2.3 (API 9), the minimum supported version.
+included. This release was tested on the latest Android version available at
+the time of testing. Android 2.3 (API 9) is the minimum supported version, but
+testing on Android 2.3 hardware has not been completed.
 
 This release is intended for direct APK distribution. Target SDK 28 does not
 meet current Google Play target API requirements.
