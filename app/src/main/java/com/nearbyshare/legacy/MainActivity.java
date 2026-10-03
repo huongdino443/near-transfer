@@ -63,7 +63,7 @@ public final class MainActivity extends Activity {
         public void run() {
             discoverySettlePending = false;
             if (discovery != null && peers.size() > 0) {
-                stopDiscoveryAfterFinding();
+                pauseDiscoverySearchAfterFinding();
             }
         }
     };
@@ -89,6 +89,7 @@ public final class MainActivity extends Activity {
     private int discoveryGeneration;
     private boolean discoveryRefreshPending;
     private boolean discoverySettlePending;
+    private boolean discoverySearchPaused;
     private ArrayList<Uri> pendingUris = new ArrayList<Uri>();
     private ArrayList<SavedDevice> savedDevices = new ArrayList<SavedDevice>();
     private boolean savedDeviceLoadFailed;
@@ -267,9 +268,7 @@ public final class MainActivity extends Activity {
                         if (screen != null) {
                             screen.finish(message);
                         }
-                        setStatus(message);
-                        Toast.makeText(MainActivity.this, message,
-                                Toast.LENGTH_LONG).show();
+                        setStatus("");
                         showNextIncomingOffer();
                     }
                 });
@@ -607,9 +606,6 @@ public final class MainActivity extends Activity {
                                     final int fileNumber, final int fileCount) {
                 ui.post(MainActivity.this, new Runnable() {
                     public void run() {
-                        String message = fileCount > 1 ?
-                                "Đã nhận " + fileNumber + "/" + fileCount + ": " + name :
-                                "Đã nhận " + name;
                         TransferProgressScreen screen = progressScreens.get(transferId);
                         if (screen != null) {
                             screen.completeItem(fileNumber - 1, file);
@@ -617,9 +613,7 @@ public final class MainActivity extends Activity {
                                 screen.finish("Đã nhận " + fileCount + " tập tin.");
                             }
                         }
-                        setStatus(message + " — Download/Near Transfer/");
-                        Toast.makeText(MainActivity.this, message,
-                                Toast.LENGTH_LONG).show();
+                        setStatus("");
                         if (fileNumber == fileCount) {
                             showNextIncomingOffer();
                         }
@@ -657,6 +651,7 @@ public final class MainActivity extends Activity {
 
     private void startPeerDiscovery() {
         final int generation = ++discoveryGeneration;
+        discoverySearchPaused = false;
         PeerDiscovery nextDiscovery = new PeerDiscovery(this, new PeerDiscovery.Listener() {
             public void onPeersChanged(final ArrayList<Peer> updatedPeers) {
                 ui.post(MainActivity.this, new Runnable() {
@@ -668,7 +663,9 @@ public final class MainActivity extends Activity {
                         discoveryRefreshPending = false;
                         refreshHandler.removeCallbacks(discoveryRefreshTimeout);
                         renderPeers();
-                        if (updatedPeers.size() > 0 && !discoverySettlePending) {
+                        if (updatedPeers.size() > 0 &&
+                                !discoverySearchPaused &&
+                                !discoverySettlePending) {
                             discoverySettlePending = true;
                             refreshHandler.postDelayed(discoverySettleTimeout,
                                     DISCOVERY_SETTLE_MS);
@@ -681,15 +678,13 @@ public final class MainActivity extends Activity {
         nextDiscovery.start();
     }
 
-    private void stopDiscoveryAfterFinding() {
-        // Allow late peers to answer before freezing the list until manual refresh.
+    private void pauseDiscoverySearchAfterFinding() {
+        // Stop outbound probes but keep listening and answering peer requests.
         refreshHandler.removeCallbacks(discoverySettleTimeout);
         discoverySettlePending = false;
-        PeerDiscovery foundDiscovery = discovery;
-        discovery = null;
-        discoveryGeneration++;
-        if (foundDiscovery != null) {
-            foundDiscovery.stop();
+        discoverySearchPaused = true;
+        if (discovery != null) {
+            discovery.pauseSearching();
         }
     }
 
