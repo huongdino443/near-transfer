@@ -2,7 +2,7 @@
 
 ## Release files
 
-- [`Near-Transfer-1.0.1.apk`](Near-Transfer-1.0.1.apk) — signed APK for installation and distribution.
+- [Near-Transfer-1.0.1.apk](https://github.com/huongdino443/near-transfer/releases/download/v1.0.1/Near-Transfer-1.0.1.apk) — signed APK for installation and distribution.
 - [`CHANGELOG.md`](CHANGELOG.md) — changes in this release.
 - [`SHA256SUMS.txt`](SHA256SUMS.txt) — SHA-256 checksums for the APK and release notes.
 
