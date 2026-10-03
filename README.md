@@ -38,9 +38,11 @@ From the repository root:
 
 Official signed releases are built by the maintainer. The release keystore and
 its passwords are private and must never be committed. Each signed release APK,
-changelog, and checksum are archived under `releases/<version>/` and linked from
-the original repository's GitHub Releases page. Debug and unsigned build
-outputs are intentionally excluded from the source repository.
+release notes, and checksum are archived under `releases/<version>/`; the
+matching source and license are available from the corresponding Git tag and
+linked from the original repository's GitHub Releases page. GPL releases must
+include the matching source and license under GPL-3.0-or-later. Debug and
+unsigned build outputs are intentionally excluded from the source repository.
 
 ## Network and security
 
@@ -58,8 +60,19 @@ See [`PROTOCOL.md`](PROTOCOL.md) for the local transfer protocol.
 
 Only releases published in the original repository's **Releases** section are
 official Near Transfer releases. Forks may build and distribute their own
-versions under the MIT license, but those versions are not official releases.
+versions, but those versions are not official releases.
 
 ## License
 
-This project is distributed under the MIT License. See [`LICENSE`](LICENSE).
+Copyright (c) 2026 Near Transfer.
+
+The app in v1.0.0 is also offered under GPL-3.0-or-later, alongside the
+original MIT grant. Its MIT notice is kept in
+[`licenses/v1.0.0/LICENSE-MIT.txt`](licenses/v1.0.0/LICENSE-MIT.txt);
+recipients who received v1.0.0 under MIT retain the rights already granted.
+
+The app code on the main branch and in releases after v1.0.0 uses
+GPL-3.0-or-later only; later releases are not offered under MIT. See
+[`LICENSE`](LICENSE). The Gradle Wrapper scripts and JAR remain under
+Apache-2.0; see [`LICENSE-APACHE-2.0`](LICENSE-APACHE-2.0). That license applies
+to the build tools, not the app.
