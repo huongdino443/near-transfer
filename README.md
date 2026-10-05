@@ -14,6 +14,8 @@ nearby devices on the same Wi-Fi network, without a cloud relay.
 
 ## Compatibility
 
+### Android
+
 - Minimum Android version: Android 2.3 (API 9).
 - Release target SDK: API 28.
 - Designed for direct APK distribution and legacy Android devices.
@@ -22,6 +24,14 @@ nearby devices on the same Wi-Fi network, without a cloud relay.
 - Tested on the latest available Android version at the time of testing and
   Android 2.3 (API 9), the minimum supported version.
 
+### Windows
+
+- Supported on Windows 7 SP1 or later, x86 and x64.
+- Requires .NET Framework 4.8. Setup downloads it from Microsoft if missing;
+  an internet connection is needed for that download, and setup requires
+  administrator permission.
+- The Windows installer and app were manually tested and confirmed working.
+  The tested Windows version and architecture were not recorded.
 ## Build
 
 Requirements:
