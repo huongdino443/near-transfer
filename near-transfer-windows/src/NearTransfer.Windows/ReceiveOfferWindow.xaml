@@ -1,0 +1,59 @@
+<Window x:Class="NearTransfer.Windows.ReceiveOfferWindow"
+        Icon="pack://application:,,,/Assets/NearTransfer.ico"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:NearTransfer.Windows"
+        Title="Yêu cầu nhận nội dung"
+        Width="540" Height="520"
+        MinHeight="380" MaxHeight="680"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize"
+        Background="{StaticResource WindowBrush}"
+        Foreground="{StaticResource TextBrush}"
+        FontFamily="Segoe UI">
+    <Grid Margin="26">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock x:Name="RequestHeading" Text="YÊU CẦU NHẬN FILE"
+                   FontSize="11" FontWeight="Bold"
+                   Foreground="{StaticResource AccentBrush}"/>
+        <StackPanel Grid.Row="1" Margin="0,10,0,18">
+            <TextBlock x:Name="SenderText" FontSize="22" FontWeight="Bold" TextWrapping="Wrap"/>
+            <TextBlock x:Name="AddressText" Margin="0,5,0,0" Foreground="{StaticResource MutedBrush}"/>
+            <TextBlock x:Name="SummaryText" Margin="0,12,0,0" Foreground="{StaticResource MutedBrush}"/>
+        </StackPanel>
+        <Border Grid.Row="2" Background="{StaticResource PanelRaisedBrush}"
+                CornerRadius="12" Padding="14">
+            <ScrollViewer CanContentScroll="False"
+                          VerticalScrollBarVisibility="Hidden"
+                          HorizontalScrollBarVisibility="Disabled"
+                          local:SmoothScrollBehavior.IsEnabled="True">
+                <ItemsControl x:Name="FilesList">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="2,5">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding Name}" TextWrapping="Wrap" Margin="0,0,12,0"/>
+                                <TextBlock Grid.Column="1" Text="{Binding SizeText}"
+                                           Foreground="{StaticResource MutedBrush}" VerticalAlignment="Center"/>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Border>
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,18,0,0">
+            <Button Content="Từ chối" MinWidth="100" Margin="0,0,9,0"
+                    Style="{StaticResource QuietButton}" Click="Decline_Click"/>
+            <Button x:Name="AcceptButton" Content="Chấp nhận" MinWidth="122"
+                    Style="{StaticResource PrimaryButton}" Click="Accept_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
