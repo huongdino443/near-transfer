@@ -1,0 +1,45 @@
+<Window x:Class="NearTransfer.Windows.FolderSetupWindow"
+        Icon="pack://application:,,,/Assets/NearTransfer.ico"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Chọn nơi lưu file"
+        Width="540" Height="330"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Background="{StaticResource WindowBrush}"
+        Foreground="{StaticResource TextBrush}"
+        FontFamily="Segoe UI">
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Chào mừng đến với Near Transfer"
+                   FontSize="23" FontWeight="Bold"/>
+        <TextBlock Grid.Row="1" Margin="0,11,0,0"
+                   Text="Chọn thư mục để lưu các file nhận được. Bạn có thể đổi thư mục này trong ứng dụng."
+                   TextWrapping="Wrap" Foreground="{StaticResource MutedBrush}" LineHeight="21"/>
+
+        <TextBlock Grid.Row="2" Margin="0,22,0,7" Text="THƯ MỤC LƯU"
+                   FontSize="11" FontWeight="Bold" Foreground="{StaticResource MutedBrush}"/>
+        <Grid Grid.Row="3" VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="FolderPathBox" VerticalContentAlignment="Center"/>
+            <Button Grid.Column="1" Margin="9,0,0,0" Content="Duyệt..."
+                    Style="{StaticResource QuietButton}" Click="Browse_Click"/>
+        </Grid>
+
+        <StackPanel Grid.Row="4" Margin="0,20,0,0">
+            <TextBlock x:Name="ErrorText" Foreground="{StaticResource ErrorBrush}" TextWrapping="Wrap"/>
+            <Button Content="Tiếp tục" HorizontalAlignment="Right" MinWidth="118"
+                    Style="{StaticResource PrimaryButton}" Click="Continue_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

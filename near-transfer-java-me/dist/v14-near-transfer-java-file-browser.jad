@@ -1,0 +1,10 @@
+MIDlet-Name: Near Transfer UI Demo
+MIDlet-Version: 0.1.0
+MIDlet-Vendor: Near Transfer
+MIDlet-Description: Read-only JSR-75 file browser; no network transfer.
+MIDlet-1: Near Transfer UI Demo,,com.nearbyshare.j2me.NearTransferMidlet
+MicroEdition-Configuration: CLDC-1.1
+MicroEdition-Profile: MIDP-2.0
+MIDlet-Permissions-Opt: javax.microedition.io.Connector.file.read
+MIDlet-Jar-URL: v14-near-transfer-java-file-browser.jar
+MIDlet-Jar-Size: 38100

@@ -1,0 +1,493 @@
+<Window x:Class="NearTransfer.Windows.MainWindow"
+        Icon="pack://application:,,,/Assets/NearTransfer.ico"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:NearTransfer.Windows"
+        Title="Near Transfer"
+        Width="1080" Height="720"
+        MinWidth="1080" MaxWidth="1080"
+        MinHeight="720" MaxHeight="720"
+        ResizeMode="CanMinimize"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource WindowBrush}"
+        Foreground="{StaticResource TextBrush}"
+        FontFamily="Segoe UI"
+        AllowDrop="True"
+        DragEnter="Window_DragEnter"
+        DragOver="Window_DragOver"
+        Drop="Window_Drop"
+        PreviewKeyDown="Window_PreviewKeyDown">
+    <Grid Background="{StaticResource WindowBrush}">
+        <Grid x:Name="HomeView" Width="1000" Margin="16"
+              HorizontalAlignment="Center" VerticalAlignment="Stretch">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="500"/>
+                <ColumnDefinition Width="500"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0" Grid.ColumnSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="Near Transfer" FontSize="24" FontWeight="SemiBold"/>
+                    <TextBlock Text="Gửi và nhận tệp trực tiếp trong mạng nội bộ"
+                               Margin="0,4,0,0" FontSize="13"
+                               Foreground="{StaticResource MutedBrush}"/>
+                </StackPanel>
+                <Border Grid.Column="1" Background="{StaticResource PanelBrush}"
+                        CornerRadius="12" Padding="12,8" Margin="0,0,8,0"
+                        VerticalAlignment="Center">
+                    <StackPanel>
+                        <TextBlock Text="ĐỊA CHỈ IP" FontSize="9"
+                                   Foreground="{StaticResource MutedBrush}"/>
+                        <TextBlock x:Name="LocalIpText" Text="Đang kiểm tra mạng..."
+                                   Margin="0,3,0,0" FontSize="12" FontWeight="SemiBold"
+                                    MaxWidth="330" TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="2" Background="{StaticResource PanelBrush}"
+                        CornerRadius="12" Padding="13,10" VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <Ellipse x:Name="ReceiveIndicator" Width="8" Height="8"
+                                 Fill="{StaticResource AccentBrush}" VerticalAlignment="Center"/>
+                        <TextBlock x:Name="ReceiveStatusText" Text="Đang khởi động"
+                                   Margin="9,0,0,0" FontSize="12"
+                                    MaxWidth="330" TextTrimming="CharacterEllipsis"
+                                   Foreground="{StaticResource MutedBrush}"
+                                   VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <Border Grid.Row="1" Grid.ColumnSpan="2" Margin="0,16,0,0"
+                    Background="{StaticResource PanelBrush}" CornerRadius="12"
+                    Padding="14,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Lưu file nhận tại" FontSize="12"
+                               Foreground="{StaticResource MutedBrush}"
+                               VerticalAlignment="Center"/>
+                    <TextBlock x:Name="SaveFolderText" Grid.Column="1"
+                               Margin="14,0,12,0" TextWrapping="Wrap"
+                               VerticalAlignment="Center" FontSize="13"/>
+                    <Button Grid.Column="2" Content="Mở thư mục"
+                            Style="{StaticResource TextButton}" Padding="10,5"
+                            MinHeight="38" Click="OpenFolder_Click"/>
+                    <Button Grid.Column="3" Content="Đổi"
+                            Style="{StaticResource SurfaceButton}" Padding="13,5"
+                            MinHeight="38" Margin="4,0,0,0"
+                            Click="ChangeFolder_Click"/>
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="2" Grid.Column="0" Margin="0,16,8,16"
+                    Background="{StaticResource PanelBrush}" CornerRadius="14"
+                    ClipToBounds="True"
+                    Padding="18">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="Lựa chọn" FontSize="22" FontWeight="SemiBold"/>
+                    <TextBlock Grid.Row="1" Margin="0,6,0,9"
+                                Text="Chọn file, ảnh, video hoặc văn bản để gửi" FontSize="13"
+                               Foreground="{StaticResource MutedBrush}"/>
+
+                    <UniformGrid x:Name="SourceTiles" Grid.Row="2" Columns="4"
+                                 Margin="-5,0" VerticalAlignment="Top">
+                        <Button Style="{StaticResource SourceTileButton}"
+                                AutomationProperties.Name="Chọn tệp"
+                                Click="AddFiles_Click">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="&#xE8A5;" FontFamily="Segoe MDL2 Assets"
+                                           FontSize="27"
+                                           Foreground="{StaticResource AccentBrush}"
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock Text="Tệp" Margin="0,7,0,0"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{StaticResource SourceTileButton}"
+                                AutomationProperties.Name="Chọn ảnh hoặc video"
+                                Click="AddMedia_Click">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="&#xE91B;" FontFamily="Segoe MDL2 Assets"
+                                           FontSize="27"
+                                           Foreground="{StaticResource AccentBrush}"
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock Text="Media" Margin="0,7,0,0"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{StaticResource SourceTileButton}"
+                                AutomationProperties.Name="Dán văn bản từ clipboard"
+                                Click="PasteText_Click">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="&#xE77F;" FontFamily="Segoe MDL2 Assets"
+                                           FontSize="27"
+                                           Foreground="{StaticResource AccentBrush}"
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock Text="Dán" Margin="0,5,0,0"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                        <Button Style="{StaticResource SourceTileButton}"
+                                AutomationProperties.Name="Nhập văn bản"
+                                Click="ComposeText_Click">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets"
+                                           FontSize="27"
+                                           Foreground="{StaticResource AccentBrush}"
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock Text="Nhập" Margin="0,5,0,0"
+                                           HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+                    </UniformGrid>
+
+                    <Border x:Name="QueueCard" Grid.Row="2" Margin="0,15,0,0"
+                            Background="{StaticResource PanelRaisedBrush}" CornerRadius="12"
+                            Padding="14" Visibility="Collapsed"
+                            VerticalAlignment="Stretch">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Đã chọn" FontSize="18"
+                                           FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                <Button x:Name="AddQueuedFilesButton" Grid.Column="1"
+                                        Content="+ Tệp" Style="{StaticResource TextButton}"
+                                        MinHeight="40" Click="AddFiles_Click"/>
+                                <Button Grid.Column="2" x:Name="ClearQueueButton"
+                                        Content="Xóa tất cả" Margin="5,0,0,0"
+                                        Style="{StaticResource TextButton}" MinHeight="40"
+                                        Foreground="{StaticResource MutedBrush}"
+                                        Click="ClearQueue_Click"/>
+                            </Grid>
+                            <TextBlock x:Name="QueueSummaryText" Grid.Row="1"
+                                       Margin="0,1,0,7" FontSize="12"
+                                       Foreground="{StaticResource MutedBrush}"
+                                       Text="Chưa có tệp nào"/>
+                            <Grid Grid.Row="2">
+                                <ListBox x:Name="QueueList"
+                                         Background="Transparent" BorderThickness="0"
+                                         local:SmoothScrollBehavior.IsEnabled="True"
+                                         ScrollViewer.CanContentScroll="False"
+                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                         ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                                    <ListBox.ItemContainerStyle>
+                                        <Style TargetType="ListBoxItem"
+                                               BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                                            <Setter Property="Padding" Value="0"/>
+                                            <Setter Property="Margin" Value="0,3"/>
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border Background="{StaticResource SurfaceHighBrush}"
+                                                    CornerRadius="10" Padding="12,9">
+                                                <Grid>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <StackPanel VerticalAlignment="Center">
+                                                        <TextBlock Text="{Binding Name}"
+                                                                   TextWrapping="Wrap"
+                                                                   FontSize="13" FontWeight="SemiBold"
+                                                                   Foreground="{StaticResource TextBrush}"/>
+                                                        <TextBlock Text="{Binding SizeText}"
+                                                                   Margin="0,3,0,0" FontSize="11"
+                                                                   Foreground="{StaticResource MutedBrush}"/>
+                                                    </StackPanel>
+                                                    <TextBlock Grid.Column="1" Text="{Binding ExtensionLabel}"
+                                                               Margin="10,0" FontSize="11"
+                                                               Foreground="{StaticResource MutedBrush}"
+                                                               VerticalAlignment="Center"/>
+                                                    <Button Grid.Column="2" Content="Gỡ" Tag="{Binding}"
+                                                            Style="{StaticResource TextButton}"
+                                                            MinHeight="36" Padding="8,4"
+                                                            Click="RemoveFile_Click"/>
+                                                </Grid>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                                <Border x:Name="TextQueueCard"
+                                        Background="{StaticResource SurfaceHighBrush}"
+                                        CornerRadius="10" Padding="12,10"
+                                        VerticalAlignment="Top" Visibility="Collapsed">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel VerticalAlignment="Center">
+                                            <TextBlock Text="Tin nhắn văn bản"
+                                                       FontSize="13" FontWeight="SemiBold"/>
+                                            <TextBlock x:Name="TextQueuePreview"
+                                                       Margin="0,4,12,0" FontSize="12"
+                                                       Foreground="{StaticResource MutedBrush}"
+                                                       TextWrapping="Wrap" MaxHeight="56"
+                                                       TextTrimming="CharacterEllipsis"/>
+                                        </StackPanel>
+                                        <Button Grid.Column="1" Content="Gỡ"
+                                                Style="{StaticResource TextButton}"
+                                                MinHeight="36" Padding="8,4"
+                                                Click="RemoveText_Click"/>
+                                    </Grid>
+                                </Border>
+                            </Grid>
+                        </Grid>
+                    </Border>
+
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="2" Grid.Column="1" Margin="8,16,0,16"
+                    Background="{StaticResource PanelBrush}" CornerRadius="14"
+                    ClipToBounds="True" Padding="14">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Thiết bị" FontSize="18"
+                                   FontWeight="SemiBold" VerticalAlignment="Center"/>
+                        <Button x:Name="RefreshPeersButton" Grid.Column="1"
+                                Content="Làm mới" Style="{StaticResource TextButton}"
+                                MinHeight="38" Click="RefreshPeers_Click"/>
+                        <Button x:Name="ManualAddressButton" Grid.Column="2"
+                                Content="+"
+                                AutomationProperties.Name="Nhập địa chỉ thiết bị"
+                                FontSize="24" Foreground="{StaticResource AccentBrush}"
+                                MinWidth="42" MinHeight="42" Padding="0"
+                                Margin="6,0,0,0"
+                                Style="{StaticResource SurfaceButton}"
+                                Click="ManualAddress_Click"/>
+                    </Grid>
+
+                    <StackPanel Grid.Row="1" Margin="0,9,0,0"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Left">
+                        <Button x:Name="NearbyDevicesTabButton"
+                                Tag="nearby"
+                                AutomationProperties.Name="Thiết bị quanh đây"
+                                Style="{StaticResource SurfaceButton}"
+                                Width="132" MinHeight="38" Padding="8,4"
+                                Margin="0,0,8,0"
+                                Click="DeviceTab_Click">
+                            <TextBlock x:Name="NearbyDevicesTabLabel" Text="Quanh đây (0)"
+                                       FontWeight="SemiBold"
+                                       Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Button}}}"/>
+                        </Button>
+                        <Button x:Name="SavedDevicesTabButton"
+                                Tag="saved"
+                                AutomationProperties.Name="Thiết bị đã lưu"
+                                Style="{StaticResource SurfaceButton}"
+                                Width="132" MinHeight="38" Padding="8,4"
+                                Click="DeviceTab_Click">
+                            <TextBlock x:Name="SavedDevicesTabLabel" Text="Đã lưu (0)"
+                                       FontWeight="SemiBold"
+                                       Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Button}}}"/>
+                        </Button>
+                    </StackPanel>
+
+                    <Grid Grid.Row="2" Margin="0,7,0,0">
+                        <Grid x:Name="NearbyDevicesView">
+                            <ListBox x:Name="DeviceList"
+                                     Background="Transparent" BorderThickness="0"
+                                     local:SmoothScrollBehavior.IsEnabled="True"
+                                     ScrollViewer.CanContentScroll="False"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem"
+                                           BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                                        <Setter Property="Padding" Value="0"/>
+                                        <Setter Property="Margin" Value="0,3"/>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{StaticResource PanelRaisedBrush}"
+                                                CornerRadius="10" Padding="12,9">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding Name}" FontSize="14"
+                                                               FontWeight="SemiBold"
+                                                               TextWrapping="Wrap"
+                                                               Foreground="{StaticResource TextBrush}"/>
+                                                    <TextBlock Text="{Binding AddressText}" Margin="0,3,0,0"
+                                                               FontSize="11"
+                                                               TextWrapping="Wrap"
+                                                               Foreground="{StaticResource MutedBrush}"/>
+                                                </StackPanel>
+                                                <Button Grid.Column="1" Tag="{Binding}"
+                                                        Style="{StaticResource SurfaceButton}"
+                                                        MinWidth="42" MinHeight="42" Padding="0"
+                                                        Click="SavePeer_Click">
+                                                    <Path Width="18" Height="21"
+                                                          Data="M 4,2 H 16 A 1,1 0 0 1 17,3 V 21 L 10,17 L 3,21 V 3 A 1,1 0 0 1 4,2 Z"
+                                                          Stretch="Fill"
+                                                          Stroke="{StaticResource AccentBrush}"
+                                                          StrokeThickness="1.7"
+                                                          StrokeLineJoin="Round">
+                                                        <Path.Style>
+                                                            <Style TargetType="Path">
+                                                                <Setter Property="Fill" Value="Transparent"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsSaved}" Value="True">
+                                                                        <Setter Property="Fill"
+                                                                                Value="{StaticResource AccentBrush}"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Path.Style>
+                                                    </Path>
+                                                </Button>
+                                                <Button Grid.Column="2" Content="Gửi"
+                                                        Tag="{Binding}" Style="{StaticResource PrimaryButton}"
+                                                        MinWidth="74" MinHeight="42" Padding="14,6"
+                                                        Margin="7,0,0,0" Click="PeerSend_Click"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <TextBlock x:Name="NetworkStatusText"
+                                       Margin="20" FontSize="12"
+                                       Foreground="{StaticResource MutedBrush}"
+                                       TextWrapping="Wrap" TextAlignment="Center"
+                                       HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       IsHitTestVisible="False"
+                                       Text="Đang tìm thiết bị Near Transfer..."/>
+                        </Grid>
+
+                        <Grid x:Name="SavedDevicesView" Visibility="Collapsed">
+                            <ListBox x:Name="SavedPeerList"
+                                     Background="Transparent" BorderThickness="0"
+                                     local:SmoothScrollBehavior.IsEnabled="True"
+                                     ScrollViewer.CanContentScroll="False"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                     ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem"
+                                           BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                                        <Setter Property="Padding" Value="0"/>
+                                        <Setter Property="Margin" Value="0,3"/>
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{StaticResource PanelRaisedBrush}"
+                                                CornerRadius="10" Padding="12,9">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+                                                <StackPanel VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding Name}" FontSize="14"
+                                                               FontWeight="SemiBold"
+                                                               TextWrapping="Wrap"
+                                                               Foreground="{StaticResource TextBrush}"/>
+                                                    <TextBlock Text="{Binding AddressText}" Margin="0,3,0,0"
+                                                               FontSize="11"
+                                                               TextWrapping="Wrap"
+                                                               Foreground="{StaticResource MutedBrush}"/>
+                                                    <StackPanel Orientation="Horizontal"
+                                                                Margin="0,5,0,0"
+                                                                VerticalAlignment="Center">
+                                                        <Ellipse Width="7" Height="7"
+                                                                 VerticalAlignment="Center">
+                                                            <Ellipse.Style>
+                                                                <Style TargetType="Ellipse">
+                                                                    <Setter Property="Fill"
+                                                                            Value="{StaticResource MutedBrush}"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding IsOnline}"
+                                                                                     Value="True">
+                                                                            <Setter Property="Fill"
+                                                                                    Value="{StaticResource AccentBrush}"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Ellipse.Style>
+                                                        </Ellipse>
+                                                        <TextBlock Text="{Binding OnlineStatus}"
+                                                                   Margin="6,0,0,0" FontSize="10"
+                                                                   Foreground="{StaticResource MutedBrush}"
+                                                                   VerticalAlignment="Center"/>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                                <Button Grid.Column="1" Content="Gỡ"
+                                                        Tag="{Binding}" Style="{StaticResource TextButton}"
+                                                        MinHeight="40" Click="RemoveSavedPeer_Click"/>
+                                                <Button Grid.Column="2" Content="Gửi"
+                                                        Tag="{Binding}" IsEnabled="{Binding IsOnline}"
+                                                        Style="{StaticResource PrimaryButton}"
+                                                        MinWidth="74" MinHeight="42" Padding="14,6"
+                                                        Margin="7,0,0,0" Click="SavedPeerSend_Click"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                            <TextBlock x:Name="SavedEmptyText"
+                                       Text="Chưa có thiết bị đã lưu.&#x0a;Nhấn biểu tượng lưu trong tab Quanh đây."
+                                       FontSize="12" Foreground="{StaticResource MutedBrush}"
+                                       TextWrapping="Wrap" TextAlignment="Center"
+                                       HorizontalAlignment="Center" VerticalAlignment="Center"
+                                       Margin="20" IsHitTestVisible="False"/>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Border>
+
+        </Grid>
+        <local:TransferProgressView x:Name="TransferProgressView"
+                                    Visibility="Collapsed"/>
+        <local:ReceivedTextView x:Name="ReceivedTextView"
+                                Visibility="Collapsed"/>
+    </Grid>
+</Window>

@@ -1,0 +1,9 @@
+MIDlet-Name: Near Transfer UI Demo
+MIDlet-Version: 0.1.0
+MIDlet-Vendor: Near Transfer
+MIDlet-Description: Touch and keypad UI demo; no network transfer.
+MIDlet-1: Near Transfer UI Demo,,com.nearbyshare.j2me.NearTransferMidlet
+MicroEdition-Configuration: CLDC-1.1
+MicroEdition-Profile: MIDP-2.0
+MIDlet-Jar-URL: v5-near-transfer-java-ui-demo.jar
+MIDlet-Jar-Size: 26792

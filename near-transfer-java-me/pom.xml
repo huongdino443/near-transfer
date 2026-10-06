@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.nearbyshare</groupId>
+    <artifactId>near-transfer-java-me-ui</artifactId>
+    <version>0.1.0</version>
+    <name>Near Transfer Java ME UI demo</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.microemu</groupId>
+            <artifactId>cldcapi11</artifactId>
+            <version>2.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.microemu</groupId>
+            <artifactId>midpapi20</artifactId>
+            <version>2.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.microemu</groupId>
+            <artifactId>microemu-jsr-75</artifactId>
+            <version>2.0.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.guardsquare</groupId>
+            <artifactId>proguard-base</artifactId>
+            <version>7.0.1</version>
+        </dependency>
+    </dependencies>
+</project>

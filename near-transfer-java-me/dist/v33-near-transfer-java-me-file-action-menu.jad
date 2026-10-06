@@ -1,0 +1,10 @@
+MIDlet-Name: Near Transfer
+MIDlet-Version: 0.3.6
+MIDlet-Vendor: Near Transfer
+MIDlet-Description: Wi-Fi file and text transfer with NWS1.
+MIDlet-1: Near Transfer,,com.nearbyshare.j2me.NearTransferMidlet
+MicroEdition-Configuration: CLDC-1.1
+MicroEdition-Profile: MIDP-2.0
+MIDlet-Permissions-Opt: javax.microedition.io.Connector.socket, javax.microedition.io.Connector.datagram, javax.microedition.io.Connector.file.read, javax.microedition.io.Connector.file.write
+MIDlet-Jar-URL: v33-near-transfer-java-me-file-action-menu.jar
+MIDlet-Jar-Size: 98676
