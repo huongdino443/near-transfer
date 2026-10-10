@@ -5,8 +5,10 @@ nearby devices on the same Wi-Fi network, without a cloud relay.
 
 ## Downloads
 
-- **Android(2.3+):** [Download the APK](https://github.com/huongdino443/near-transfer/releases/download/v1.0.1/Near-Transfer-1.0.1.apk) · [Release notes and checksums](https://github.com/huongdino443/near-transfer/releases/tag/v1.0.1).
-- **Windows(Windows 7 SP1+):** [Download the installer](https://github.com/huongdino443/near-transfer/releases/download/windows-v1.0.0/v1.0.0-NearTransfer-Windows-Setup.exe) · [Release notes](https://github.com/huongdino443/near-transfer/releases/tag/windows-v1.0.0).
+- **Android (2.3+):**  
+  [Download the APK](https://github.com/huongdino443/near-transfer/releases/download/v1.0.1/Near-Transfer-1.0.1.apk)
+- **Windows (Windows 7 SP1+):**  
+  [Download the installer](https://github.com/huongdino443/near-transfer/releases/download/windows-v1.0.0/v1.0.0-NearTransfer-Windows-Setup.exe)
 
 ## Features
 
