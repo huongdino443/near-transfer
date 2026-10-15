@@ -220,13 +220,15 @@ final class MaterialDialog {
         LinearLayout panel = new LinearLayout(context);
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setPadding(dp(context, 20), dp(context, 18),
-                dp(context, 20), dp(context, 18));
+                dp(context, 20), dp(context, 20));
         panel.setBackgroundDrawable(MaterialUi.container(context,
                 MaterialUi.SURFACE_CONTAINER, 16));
 
         LinearLayout header = new LinearLayout(context);
         header.setOrientation(LinearLayout.HORIZONTAL);
         header.setGravity(Gravity.CENTER_VERTICAL);
+        header.setClipChildren(false);
+        header.setClipToPadding(false);
         panel.addView(header, fullWidth());
 
         TextView title = new TextView(context);
@@ -246,8 +248,10 @@ final class MaterialDialog {
         close.setClickable(true);
         close.setContentDescription("Đóng chọn nội dung");
         close.setBackgroundDrawable(null);
-        header.addView(close, new LinearLayout.LayoutParams(
-                dp(context, 44), dp(context, 48)));
+        LinearLayout.LayoutParams closeParams = new LinearLayout.LayoutParams(
+                dp(context, 44), dp(context, 48));
+        closeParams.topMargin = -dp(context, 3);
+        header.addView(close, closeParams);
         close.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 dialog.dismiss();
@@ -268,7 +272,7 @@ final class MaterialDialog {
         LinearLayout options = new LinearLayout(context);
         options.setOrientation(LinearLayout.VERTICAL);
         LinearLayout.LayoutParams optionsParams = fullWidth();
-        optionsParams.topMargin = dp(context, 16);
+        optionsParams.topMargin = 0;
         panel.addView(options, optionsParams);
 
         for (int i = 0; i < labels.length; i++) {
