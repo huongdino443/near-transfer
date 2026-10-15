@@ -234,7 +234,6 @@ final class MaterialDialog {
         title.setTextColor(MaterialUi.ON_SURFACE);
         title.setTextSize(21);
         title.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
-        title.setGravity(Gravity.CENTER_VERTICAL);
         header.addView(title, new LinearLayout.LayoutParams(
                 0, dp(context, 48), 1));
 
@@ -242,7 +241,7 @@ final class MaterialDialog {
         close.setText("×");
         close.setTextSize(28);
         close.setTextColor(MaterialUi.ON_SURFACE_VARIANT);
-        close.setGravity(Gravity.CENTER);
+        close.setGravity(Gravity.TOP | Gravity.RIGHT);
         close.setFocusable(false);
         close.setClickable(true);
         close.setContentDescription("Đóng chọn nội dung");
