@@ -511,7 +511,7 @@ public final class MainActivity extends Activity {
 
         LinearLayout ipFooter = column();
         ipFooter.setGravity(Gravity.CENTER);
-        ipFooter.setPadding(dp(20), dp(9), dp(20), dp(20));
+        ipFooter.setPadding(dp(20), dp(9), dp(20), dp(10));
         ipFooter.setBackgroundColor(MaterialUi.SURFACE);
 
         TextView addressLabel = text("Địa chỉ IP của máy này", 12,
@@ -890,7 +890,7 @@ public final class MainActivity extends Activity {
             LinearLayout row = new LinearLayout(this);
             row.setOrientation(LinearLayout.HORIZONTAL);
             row.setGravity(Gravity.CENTER_VERTICAL);
-            row.setPadding(dp(13), dp(10), dp(13), dp(13));
+            row.setPadding(dp(13), dp(10), dp(10), dp(10));
             row.setBackgroundDrawable(MaterialUi.stateBackground(this,
                     MaterialUi.SURFACE_CONTAINER, MaterialUi.SURFACE_HIGH,
                     MaterialUi.SURFACE_CONTAINER, 10));
@@ -970,7 +970,7 @@ public final class MainActivity extends Activity {
             LinearLayout row = new LinearLayout(this);
             row.setOrientation(LinearLayout.HORIZONTAL);
             row.setGravity(Gravity.CENTER_VERTICAL);
-            row.setPadding(dp(13), dp(10), dp(13), dp(13));
+            row.setPadding(dp(13), dp(10), dp(10), dp(10));
             row.setBackgroundDrawable(MaterialUi.stateBackground(this,
                     MaterialUi.SURFACE_CONTAINER, MaterialUi.SURFACE_HIGH,
                     MaterialUi.SURFACE_CONTAINER, 10));
