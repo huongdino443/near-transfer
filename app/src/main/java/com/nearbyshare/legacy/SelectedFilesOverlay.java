@@ -50,10 +50,7 @@ final class SelectedFilesOverlay {
         LinearLayout header = new LinearLayout(activity);
         header.setOrientation(LinearLayout.HORIZONTAL);
         header.setGravity(Gravity.CENTER_VERTICAL);
-        LinearLayout.LayoutParams headerParams = fullWidth();
-        headerParams.height = dp(activity, 56);
-        headerParams.topMargin = dp(activity, 8);
-        root.addView(header, headerParams);
+        root.addView(header, fullWidth());
 
         FrameLayout back = new FrameLayout(activity);
         back.setClickable(true);
@@ -63,16 +60,18 @@ final class SelectedFilesOverlay {
         MaterialIconView backIcon = new MaterialIconView(activity,
                 MaterialIconView.BACK);
         backIcon.setTint(MaterialUi.ON_SURFACE);
-        back.addView(backIcon, new FrameLayout.LayoutParams(
+        FrameLayout.LayoutParams backIconParams = new FrameLayout.LayoutParams(
                 dp(activity, 32), dp(activity, 32),
-                Gravity.LEFT | Gravity.CENTER_VERTICAL));
+                Gravity.LEFT | Gravity.BOTTOM);
+        backIconParams.bottomMargin = dp(activity, 7);
+        back.addView(backIcon, backIconParams);
         header.addView(back, new LinearLayout.LayoutParams(dp(activity, 44),
-                dp(activity, 56)));
+                dp(activity, 52)));
         TextView title = text(activity, "Tệp đang chờ", 21,
                 MaterialUi.ON_SURFACE, true);
         title.setGravity(Gravity.CENTER_VERTICAL);
         LinearLayout.LayoutParams titleParams =
-                new LinearLayout.LayoutParams(0, dp(activity, 56), 1);
+                new LinearLayout.LayoutParams(0, dp(activity, 52), 1);
         titleParams.leftMargin = dp(activity, 4);
         header.addView(title, titleParams);
         back.setOnClickListener(new View.OnClickListener() {
