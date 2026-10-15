@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -51,13 +52,15 @@ final class SelectedFilesOverlay {
         header.setGravity(Gravity.CENTER_VERTICAL);
         root.addView(header, fullWidth());
 
-        TextView back = new TextView(activity);
-        back.setText("‹");
-        back.setTextSize(34);
-        back.setTextColor(MaterialUi.ON_SURFACE);
-        back.setGravity(Gravity.CENTER);
+        FrameLayout back = new FrameLayout(activity);
         back.setContentDescription("Đóng danh sách tệp đã chọn");
         back.setBackgroundDrawable(MaterialUi.textButtonBackground(activity));
+        MaterialIconView backIcon = new MaterialIconView(activity,
+                MaterialIconView.BACK);
+        backIcon.setTint(MaterialUi.ON_SURFACE);
+        back.addView(backIcon, new FrameLayout.LayoutParams(
+                dp(activity, 24), dp(activity, 24),
+                Gravity.LEFT | Gravity.CENTER_VERTICAL));
         header.addView(back, new LinearLayout.LayoutParams(dp(activity, 48),
                 dp(activity, 52)));
         TextView title = text(activity, "Tệp đang chờ", 21,
@@ -77,7 +80,7 @@ final class SelectedFilesOverlay {
         controls.setGravity(Gravity.CENTER_VERTICAL);
         LinearLayout.LayoutParams controlsParams = fullWidth();
         controlsParams.topMargin = dp(activity, 12);
-        controlsParams.bottomMargin = dp(activity, 8);
+        controlsParams.bottomMargin = dp(activity, 20);
         root.addView(controls, controlsParams);
 
         final TextView summary = text(activity, "", 14,

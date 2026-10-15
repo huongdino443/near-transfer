@@ -17,6 +17,8 @@ final class MaterialIconView extends View {
     static final int CHECK = 7;
     static final int BOOKMARK = 8;
     static final int REMOVE = 9;
+    static final int NEXT = 10;
+    static final int BACK = 11;
 
     private int icon;
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -74,6 +76,10 @@ final class MaterialIconView extends View {
             drawBookmark(canvas);
         } else if (icon == REMOVE) {
             drawRemove(canvas);
+        } else if (icon == NEXT) {
+            drawNext(canvas);
+        } else if (icon == BACK) {
+            drawBack(canvas);
         }
         canvas.restore();
     }
@@ -188,5 +194,23 @@ final class MaterialIconView extends View {
         canvas.drawLine(9f, 3.5f, 15f, 3.5f, paint);
         canvas.drawLine(9.5f, 10f, 9.5f, 18f, paint);
         canvas.drawLine(14.5f, 10f, 14.5f, 18f, paint);
+    }
+
+    private void drawNext(Canvas canvas) {
+        path.reset();
+        path.moveTo(9f, 5f);
+        path.lineTo(16f, 12f);
+        path.lineTo(9f, 19f);
+        canvas.drawPath(path, paint);
+    }
+
+    private void drawBack(Canvas canvas) {
+        canvas.drawLine(4f, 12f, 20f, 12f, paint);
+        path.reset();
+        path.moveTo(4f, 12f);
+        path.lineTo(11f, 5f);
+        path.moveTo(4f, 12f);
+        path.lineTo(11f, 19f);
+        canvas.drawPath(path, paint);
     }
 }

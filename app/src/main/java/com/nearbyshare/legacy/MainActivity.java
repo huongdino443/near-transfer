@@ -21,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -75,6 +76,8 @@ public final class MainActivity extends Activity {
     private View sourceRow;
     private LinearLayout queueCard;
     private LinearLayout queueItems;
+    private HorizontalScrollView queueScroll;
+    private FrameLayout queueExpandButton;
     private TextView queueSummary;
     private View homeScreen;
     private String pendingText;
@@ -381,12 +384,45 @@ public final class MainActivity extends Activity {
         LinearLayout.LayoutParams summaryParams = fullWidth();
         summaryParams.topMargin = dp(3);
         queueCard.addView(queueSummary, summaryParams);
+        FrameLayout queueRow = new FrameLayout(this);
+        LinearLayout.LayoutParams itemsParams = fullWidth();
+        itemsParams.topMargin = dp(9);
+        queueCard.addView(queueRow, itemsParams);
+
+        queueScroll = new HorizontalScrollView(this);
+        queueScroll.setHorizontalScrollBarEnabled(false);
+        queueScroll.setHorizontalFadingEdgeEnabled(true);
+        queueScroll.setFadingEdgeLength(dp(24));
+        FrameLayout.LayoutParams scrollParams = new FrameLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, dp(48),
+                Gravity.LEFT | Gravity.CENTER_VERTICAL);
+        scrollParams.rightMargin = dp(55);
+        queueRow.addView(queueScroll, scrollParams);
+
         queueItems = new LinearLayout(this);
         queueItems.setOrientation(LinearLayout.HORIZONTAL);
         queueItems.setGravity(Gravity.CENTER_VERTICAL);
-        LinearLayout.LayoutParams itemsParams = fullWidth();
-        itemsParams.topMargin = dp(9);
-        queueCard.addView(queueItems, itemsParams);
+        queueScroll.addView(queueItems, new HorizontalScrollView.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+        queueExpandButton = new FrameLayout(this);
+        queueExpandButton.setFocusable(true);
+        queueExpandButton.setClickable(true);
+        queueExpandButton.setBackgroundDrawable(
+                MaterialUi.surfaceButtonBackground(this));
+        MaterialIconView expandIcon = new MaterialIconView(this,
+                MaterialIconView.NEXT);
+        expandIcon.setTint(MaterialUi.PRIMARY);
+        queueExpandButton.addView(expandIcon, new FrameLayout.LayoutParams(
+                dp(24), dp(24), Gravity.CENTER));
+        FrameLayout.LayoutParams expandParams = new FrameLayout.LayoutParams(
+                dp(48), dp(48), Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+        queueRow.addView(queueExpandButton, expandParams);
+        queueExpandButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                showSelectedFilesOverlay();
+            }
+        });
 
         permissionText = text("", 14, MaterialUi.ERROR, true);
         permissionText.setPadding(dp(16), dp(14), dp(16), dp(14));
@@ -1343,15 +1379,15 @@ public final class MainActivity extends Activity {
             addQueuePreviewTile(MaterialIconView.CLIPBOARD,
                     "Tin nhắn văn bản");
         } else {
-            int visibleCount = Math.min(3, pendingUris.size());
-            for (int i = 0; i < visibleCount; i++) {
+            for (int i = 0; i < pendingUris.size(); i++) {
                 Uri uri = pendingUris.get(i);
                 addQueuePreviewTile(queueIconForUri(uri),
                         FileSender.displayName(this, uri));
             }
         }
-        String expandLabel = count > 3 ? "+" + (count - 3) : "›";
-        addQueueExpandButton(expandLabel, count);
+        queueScroll.scrollTo(0, 0);
+        queueExpandButton.setContentDescription("Mở danh sách " + count +
+                (hasText ? " tin nhắn đã chọn" : " tệp đã chọn"));
     }
 
     private void addQueuePreviewTile(int icon, String description) {
@@ -1367,26 +1403,6 @@ public final class MainActivity extends Activity {
                 dp(48), dp(48));
         params.rightMargin = dp(7);
         queueItems.addView(tile, params);
-    }
-
-    private void addQueueExpandButton(String label, final int count) {
-        TextView expand = text(label, label.length() > 2 ? 13 : 25,
-                MaterialUi.PRIMARY, true);
-        expand.setGravity(Gravity.CENTER);
-        expand.setPadding(dp(7), 0, dp(7), 0);
-        expand.setMinWidth(dp(48));
-        expand.setMinHeight(dp(48));
-        expand.setBackgroundDrawable(MaterialUi.textButtonBackground(this));
-        expand.setContentDescription("Mở danh sách " + count +
-                (pendingText == null ? " tệp đã chọn" : " tin nhắn đã chọn"));
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, dp(48));
-        queueItems.addView(expand, params);
-        expand.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                showSelectedFilesOverlay();
-            }
-        });
     }
 
     private int queueIconForUri(Uri uri) {
