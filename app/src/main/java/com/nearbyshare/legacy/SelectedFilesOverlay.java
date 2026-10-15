@@ -53,21 +53,23 @@ final class SelectedFilesOverlay {
         root.addView(header, fullWidth());
 
         FrameLayout back = new FrameLayout(activity);
+        back.setClickable(true);
+        back.setFocusable(false);
         back.setContentDescription("Đóng danh sách tệp đã chọn");
-        back.setBackgroundDrawable(MaterialUi.textButtonBackground(activity));
+        back.setBackgroundDrawable(null);
         MaterialIconView backIcon = new MaterialIconView(activity,
                 MaterialIconView.BACK);
         backIcon.setTint(MaterialUi.ON_SURFACE);
         back.addView(backIcon, new FrameLayout.LayoutParams(
-                dp(activity, 24), dp(activity, 24),
+                dp(activity, 30), dp(activity, 30),
                 Gravity.LEFT | Gravity.CENTER_VERTICAL));
-        header.addView(back, new LinearLayout.LayoutParams(dp(activity, 48),
+        header.addView(back, new LinearLayout.LayoutParams(dp(activity, 44),
                 dp(activity, 52)));
         TextView title = text(activity, "Tệp đang chờ", 21,
                 MaterialUi.ON_SURFACE, true);
         LinearLayout.LayoutParams titleParams =
                 new LinearLayout.LayoutParams(0, dp(activity, 52), 1);
-        titleParams.leftMargin = dp(activity, 8);
+        titleParams.leftMargin = dp(activity, 4);
         header.addView(title, titleParams);
         back.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -125,9 +127,8 @@ final class SelectedFilesOverlay {
                 rows.removeAllViews();
 
                 if (textMode) {
-                    long size = utf8Length(selectedText);
                     rows.addView(createRow(activity, "Tin nhắn văn bản",
-                            Formatter.formatFileSize(activity, size),
+                            previewText(selectedText),
                             MaterialIconView.CLIPBOARD, new Runnable() {
                                 public void run() {
                                     listener.onRemoveText();
@@ -240,6 +241,8 @@ final class SelectedFilesOverlay {
         details.addView(nameView, fullWidth());
         TextView sizeView = text(activity, size, 12,
                 MaterialUi.ON_SURFACE_VARIANT, false);
+        sizeView.setMaxLines(2);
+        sizeView.setEllipsize(TextUtils.TruncateAt.END);
         LinearLayout.LayoutParams sizeParams = fullWidth();
         sizeParams.topMargin = dp(activity, 3);
         details.addView(sizeView, sizeParams);
@@ -321,6 +324,14 @@ final class SelectedFilesOverlay {
         } catch (Exception ignored) {
             return value.length();
         }
+    }
+
+    private static String previewText(String value) {
+        String snippet = value.replace('\n', ' ').replace('\r', ' ').trim();
+        if (snippet.length() > 90) {
+            return snippet.substring(0, 87) + "…";
+        }
+        return snippet;
     }
 
     private static LinearLayout.LayoutParams rowParams(Activity activity) {

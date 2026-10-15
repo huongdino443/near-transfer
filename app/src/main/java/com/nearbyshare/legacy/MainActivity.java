@@ -75,6 +75,8 @@ public final class MainActivity extends Activity {
     private LinearLayout savedPeerList;
     private View sourceRow;
     private LinearLayout queueCard;
+    private LinearLayout queueTextPreview;
+    private FrameLayout queueRow;
     private LinearLayout queueItems;
     private HorizontalScrollView queueScroll;
     private FrameLayout queueExpandButton;
@@ -384,7 +386,15 @@ public final class MainActivity extends Activity {
         LinearLayout.LayoutParams summaryParams = fullWidth();
         summaryParams.topMargin = dp(3);
         queueCard.addView(queueSummary, summaryParams);
-        FrameLayout queueRow = new FrameLayout(this);
+        queueTextPreview = new LinearLayout(this);
+        queueTextPreview.setOrientation(LinearLayout.HORIZONTAL);
+        queueTextPreview.setGravity(Gravity.CENTER_VERTICAL);
+        LinearLayout.LayoutParams textPreviewParams = fullWidth();
+        textPreviewParams.topMargin = dp(9);
+        queueCard.addView(queueTextPreview, textPreviewParams);
+        queueTextPreview.setVisibility(View.GONE);
+
+        queueRow = new FrameLayout(this);
         LinearLayout.LayoutParams itemsParams = fullWidth();
         itemsParams.topMargin = dp(9);
         queueCard.addView(queueRow, itemsParams);
@@ -1361,10 +1371,13 @@ public final class MainActivity extends Activity {
     }
 
     private void updateQueueUi() {
-        if (sourceRow == null || queueCard == null || queueItems == null) {
+        if (sourceRow == null || queueCard == null || queueItems == null ||
+                queueTextPreview == null || queueRow == null ||
+                queueExpandButton == null) {
             return;
         }
         queueItems.removeAllViews();
+        queueTextPreview.removeAllViews();
         boolean hasText = pendingText != null;
         int count = hasText ? 1 : pendingUris.size();
         sourceRow.setVisibility(count == 0 ? View.VISIBLE : View.GONE);
@@ -1376,18 +1389,62 @@ public final class MainActivity extends Activity {
                 "1 tin nhắn · không gộp chung với tập tin" :
                 count + " tập tin đã chọn");
         if (hasText) {
-            addQueuePreviewTile(MaterialIconView.CLIPBOARD,
-                    "Tin nhắn văn bản");
+            queueTextPreview.setVisibility(View.VISIBLE);
+            queueRow.setVisibility(View.GONE);
+            queueExpandButton.setVisibility(View.GONE);
+            addQueueTextPreview();
         } else {
+            queueTextPreview.setVisibility(View.GONE);
+            queueRow.setVisibility(View.VISIBLE);
+            queueExpandButton.setVisibility(View.VISIBLE);
             for (int i = 0; i < pendingUris.size(); i++) {
                 Uri uri = pendingUris.get(i);
                 addQueuePreviewTile(queueIconForUri(uri),
                         FileSender.displayName(this, uri));
             }
+            queueScroll.scrollTo(0, 0);
         }
-        queueScroll.scrollTo(0, 0);
         queueExpandButton.setContentDescription("Mở danh sách " + count +
                 (hasText ? " tin nhắn đã chọn" : " tệp đã chọn"));
+    }
+
+    private void addQueueTextPreview() {
+        LinearLayout details = column();
+        details.addView(text("Tin nhắn văn bản", 14,
+                MaterialUi.ON_SURFACE, true));
+        TextView preview = text(previewText(pendingText), 12,
+                MaterialUi.ON_SURFACE_VARIANT, false);
+        preview.setMaxLines(2);
+        preview.setEllipsize(android.text.TextUtils.TruncateAt.END);
+        LinearLayout.LayoutParams previewParams = fullWidth();
+        previewParams.topMargin = dp(3);
+        details.addView(preview, previewParams);
+        queueTextPreview.addView(details, new LinearLayout.LayoutParams(
+                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+
+        Button remove = button("Gỡ");
+        remove.setTextColor(MaterialUi.PRIMARY);
+        remove.setGravity(Gravity.CENTER);
+        remove.setPadding(dp(12), dp(8), dp(8), dp(8));
+        remove.setBackgroundDrawable(MaterialUi.textButtonBackground(this));
+        remove.setContentDescription("Gỡ tin nhắn khỏi hàng chờ");
+        queueTextPreview.addView(remove, new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, dp(44)));
+        remove.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                pendingText = null;
+                updateQueueUi();
+            }
+        });
+    }
+
+    private String previewText(String value) {
+        String snippet = value == null ? "" :
+                value.replace('\n', ' ').replace('\r', ' ').trim();
+        if (snippet.length() > 90) {
+            return snippet.substring(0, 87) + "…";
+        }
+        return snippet;
     }
 
     private void addQueuePreviewTile(int icon, String description) {
