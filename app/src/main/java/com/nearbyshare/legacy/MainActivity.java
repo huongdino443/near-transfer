@@ -498,47 +498,6 @@ public final class MainActivity extends Activity {
         page.addView(savedPeerList, fullWidth());
         renderSavedDevices();
 
-        LinearLayout receiveLocationCard = column();
-        receiveLocationCard.setPadding(dp(14), dp(13), dp(14), dp(14));
-        receiveLocationCard.setBackgroundDrawable(darkCardBackground());
-        LinearLayout.LayoutParams receiveLocationParams = fullWidth();
-        receiveLocationParams.topMargin = dp(18);
-        page.addView(receiveLocationCard, receiveLocationParams);
-
-        TextView receiveLocationTitle = text("Vị trí lưu tệp nhận", 16,
-                MaterialUi.ON_SURFACE, true);
-        receiveLocationCard.addView(receiveLocationTitle, fullWidth());
-        TextView receiveLocationDescription = text(
-                "Tệp và tin nhắn nhận được sẽ lưu vào đây.", 12,
-                MaterialUi.ON_SURFACE_VARIANT, false);
-        LinearLayout.LayoutParams receiveDescriptionParams = fullWidth();
-        receiveDescriptionParams.topMargin = dp(4);
-        receiveLocationCard.addView(receiveLocationDescription,
-                receiveDescriptionParams);
-
-        LinearLayout receiveLocationActions = new LinearLayout(this);
-        receiveLocationActions.setGravity(Gravity.CENTER_VERTICAL);
-        LinearLayout.LayoutParams receiveActionsParams = fullWidth();
-        receiveActionsParams.topMargin = dp(9);
-        receiveLocationCard.addView(receiveLocationActions, receiveActionsParams);
-        receivedDirectoryText = text("", 13, MaterialUi.ON_SURFACE, false);
-        receivedDirectoryText.setMaxLines(2);
-        receivedDirectoryText.setEllipsize(android.text.TextUtils.TruncateAt.MIDDLE);
-        receiveLocationActions.addView(receivedDirectoryText,
-                new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-        Button changeLocationButton = button("Đổi");
-        changeLocationButton.setTextColor(MaterialUi.PRIMARY);
-        changeLocationButton.setBackgroundDrawable(MaterialUi.textButtonBackground(this));
-        receiveLocationActions.addView(changeLocationButton,
-                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                        dp(44)));
-        changeLocationButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View view) {
-                showReceivedFolderEditor();
-            }
-        });
-        updateReceivedDirectoryLabel();
-
         statusText = text("", 12, MaterialUi.ON_SURFACE_VARIANT, false);
         statusText.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams footerStatusParams = fullWidth();
@@ -552,20 +511,49 @@ public final class MainActivity extends Activity {
                 ViewGroup.LayoutParams.MATCH_PARENT, dp(1)));
 
         LinearLayout ipFooter = column();
-        ipFooter.setGravity(Gravity.CENTER);
-        ipFooter.setPadding(dp(20), dp(9), dp(20), dp(10));
+        ipFooter.setOrientation(LinearLayout.HORIZONTAL);
+        ipFooter.setGravity(Gravity.CENTER_VERTICAL);
+        ipFooter.setPadding(dp(18), dp(8), dp(12), dp(8));
         ipFooter.setBackgroundColor(MaterialUi.SURFACE);
 
+        LinearLayout addressBlock = column();
+        addressBlock.setGravity(Gravity.CENTER_VERTICAL);
+        ipFooter.addView(addressBlock,
+                new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
         TextView addressLabel = text("Địa chỉ IP của máy này", 12,
                 MaterialUi.ON_SURFACE_VARIANT, false);
-        addressLabel.setGravity(Gravity.CENTER);
-        ipFooter.addView(addressLabel, fullWidth());
+        addressBlock.addView(addressLabel, fullWidth());
 
-        addressText = text("Đang kiểm tra Wi-Fi…", 15,
+        addressText = text("Đang kiểm tra Wi-Fi…", 14,
                 MaterialUi.ON_SURFACE, true);
-        addressText.setGravity(Gravity.CENTER);
         addressText.setSingleLine(true);
-        ipFooter.addView(addressText, fullWidth());
+        addressBlock.addView(addressText, fullWidth());
+
+        LinearLayout receiveLocationButton = column();
+        receiveLocationButton.setGravity(Gravity.CENTER);
+        receiveLocationButton.setPadding(dp(10), dp(3), dp(2), dp(3));
+        receiveLocationButton.setBackgroundDrawable(
+                MaterialUi.textButtonBackground(this));
+        receiveLocationButton.setFocusable(true);
+        receiveLocationButton.setClickable(true);
+        receiveLocationButton.setContentDescription("Đổi vị trí lưu tệp nhận");
+        ipFooter.addView(receiveLocationButton,
+                new LinearLayout.LayoutParams(dp(148), ViewGroup.LayoutParams.WRAP_CONTENT));
+        TextView receiveLocationTitle = text("Lưu vào", 16,
+                MaterialUi.ON_SURFACE, true);
+        receiveLocationTitle.setGravity(Gravity.CENTER);
+        receiveLocationButton.addView(receiveLocationTitle, fullWidth());
+        receivedDirectoryText = text("", 11, MaterialUi.PRIMARY, false);
+        receivedDirectoryText.setGravity(Gravity.CENTER);
+        receivedDirectoryText.setSingleLine(true);
+        receivedDirectoryText.setEllipsize(android.text.TextUtils.TruncateAt.MIDDLE);
+        receiveLocationButton.addView(receivedDirectoryText, fullWidth());
+        receiveLocationButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                showReceivedFolderPicker();
+            }
+        });
+        updateReceivedDirectoryLabel();
         root.addView(ipFooter, fullWidth());
 
         homeScreen = root;
@@ -579,33 +567,15 @@ public final class MainActivity extends Activity {
         }
     }
 
-    private void showReceivedFolderEditor() {
-        final EditText input = new EditText(this);
-        input.setSingleLine(true);
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        input.setHint("/storage/emulated/0/Download/Near Transfer");
-        input.setText(DownloadFolders.receivedDirectory(this).getAbsolutePath());
-        MaterialUi.styleEditText(this, input);
-        Dialog dialog = MaterialDialog.show(this, "Vị trí lưu tệp nhận",
-                "Nhập đường dẫn của thư mục đã có trong bộ nhớ dùng chung.",
-                input, "Hủy", null, "Lưu", new MaterialDialog.Action() {
-                    public boolean onClick(Dialog dialog) {
-                        String path = input.getText().toString().trim();
-                        if (path.length() == 0) {
-                            Toast.makeText(MainActivity.this,
-                                    "Hãy nhập đường dẫn thư mục.",
-                                    Toast.LENGTH_LONG).show();
-                            return false;
-                        }
-                        File directory = new File(path);
-                        if (!directory.isAbsolute()) {
-                            directory = new File(
-                                    DownloadFolders.externalStorageRoot(), path);
-                        }
+    private void showReceivedFolderPicker() {
+        ReceivedFolderPickerDialog.show(this,
+                DownloadFolders.receivedDirectory(this),
+                new ReceivedFolderPickerDialog.Listener() {
+                    public boolean onFolderChosen(File directory) {
                         if (!DownloadFolders.setReceivedDirectory(
                                 MainActivity.this, directory)) {
                             Toast.makeText(MainActivity.this,
-                                    "Không dùng được thư mục này. Hãy chọn thư mục có thể ghi trong bộ nhớ dùng chung.",
+                                    "Không thể dùng thư mục này để lưu tệp.",
                                     Toast.LENGTH_LONG).show();
                             return false;
                         }
@@ -616,7 +586,6 @@ public final class MainActivity extends Activity {
                         return true;
                     }
                 });
-        MaterialDialog.focusInput(dialog, input);
     }
 
     private LinearLayout.LayoutParams sourceTileParams() {
