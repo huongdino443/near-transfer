@@ -1,6 +1,8 @@
 package com.nearbyshare.legacy;
 
 
+import android.content.Context;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -48,6 +50,7 @@ final class LanShareServer {
     }
 
     private final Listener listener;
+    private final Context context;
     private final Semaphore activeTransfers = new Semaphore(2);
     private final HashMap<String, AcceptedTransfer> approvedTransfers =
             new HashMap<String, AcceptedTransfer>();
@@ -55,7 +58,8 @@ final class LanShareServer {
     private volatile ServerSocket serverSocket;
     private Thread acceptThread;
 
-    LanShareServer(Listener listener) {
+    LanShareServer(Context context, Listener listener) {
+        this.context = context.getApplicationContext();
         this.listener = listener;
     }
 
@@ -515,7 +519,7 @@ final class LanShareServer {
     private File receiveFile(InputStream input, long contentLength, String fileName,
                              String transferId, int fileIndex)
             throws IOException {
-        File directory = DownloadFolders.ensureReceivedDirectory();
+        File directory = DownloadFolders.ensureReceivedDirectory(context);
 
         File destination = ShareFiles.uniqueFile(directory, fileName);
         FileOutputStream fileOutput = null;

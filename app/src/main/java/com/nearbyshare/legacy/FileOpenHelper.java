@@ -13,44 +13,32 @@ final class FileOpenHelper {
     private FileOpenHelper() {
     }
 
-    static void openContainingFolder(Context context, File file) {
+    static void open(Context context, File file) {
         if (context == null) {
             return;
         }
-        if (file == null || !file.isFile() || !DownloadFolders.contains(file)) {
+        if (file == null || !file.isFile() ||
+                !DownloadFolders.contains(context, file)) {
             Toast.makeText(context, "Không tìm thấy tệp đã nhận.",
                     Toast.LENGTH_LONG).show();
             return;
         }
-
-        File folder = file.getParentFile();
-        if (folder == null || !folder.isDirectory()) {
-            Toast.makeText(context, "Không tìm thấy thư mục chứa tệp.",
-                    Toast.LENGTH_LONG).show();
-            return;
-        }
-        Uri uri;
-        try {
-            uri = ReceivedFileProvider.uriForReceivedDirectory(folder);
-        } catch (IllegalArgumentException e) {
-            Toast.makeText(context, "Không tìm thấy thư mục chứa tệp.",
-                    Toast.LENGTH_LONG).show();
-            return;
-        }
+        Uri uri = ReceivedFileProvider.uriForFile(context, file);
+        String mimeType = context.getContentResolver().getType(uri);
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(uri, "*/*");
+        intent.setDataAndType(uri, mimeType);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         if (!(context instanceof Activity)) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         }
 
         try {
-            context.startActivity(intent);
+            context.startActivity(Intent.createChooser(intent, "Mở tệp bằng"));
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(context, "Không có ứng dụng tương thích để mở thư mục này.",
+            Toast.makeText(context, "Không có ứng dụng phù hợp để mở tệp này.",
                     Toast.LENGTH_LONG).show();
         } catch (SecurityException e) {
-            Toast.makeText(context, "Không thể cấp quyền mở thư mục này.",
+            Toast.makeText(context, "Không thể cấp quyền mở tệp này.",
                     Toast.LENGTH_LONG).show();
         }
     }

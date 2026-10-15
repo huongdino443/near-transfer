@@ -20,27 +20,15 @@ public final class ReceivedFileProvider extends ContentProvider {
             COLUMN_DISPLAY_NAME, COLUMN_SIZE
     };
 
-    static Uri uriForFile(File file) {
-        if (file == null || !file.isFile() || !DownloadFolders.contains(file)) {
+    static Uri uriForFile(android.content.Context context, File file) {
+        if (file == null || !file.isFile() ||
+                !DownloadFolders.contains(context, file)) {
             throw new IllegalArgumentException("File is not a received Near Transfer file.");
         }
         return new Uri.Builder()
                 .scheme("content")
                 .authority(AUTHORITY)
                 .appendPath(file.getName())
-                .build();
-    }
-
-    static Uri uriForReceivedDirectory(File directory) {
-        if (directory == null || !directory.isDirectory() ||
-                !isReceivedDirectory(directory)) {
-            throw new IllegalArgumentException(
-                    "Directory is not the received Near Transfer folder.");
-        }
-        return new Uri.Builder()
-                .scheme("content")
-                .authority(AUTHORITY)
-                .appendPath("folder")
                 .build();
     }
 
@@ -51,14 +39,6 @@ public final class ReceivedFileProvider extends ContentProvider {
 
     @Override
     public String getType(Uri uri) {
-        if (isReceivedDirectoryUri(uri)) {
-            try {
-                resolveReceivedDirectory();
-                return "vnd.android.document/directory";
-            } catch (FileNotFoundException e) {
-                return "application/octet-stream";
-            }
-        }
         File file;
         try {
             file = resolveFile(uri);
@@ -80,16 +60,6 @@ public final class ReceivedFileProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
-        if (isReceivedDirectoryUri(uri)) {
-            try {
-                return new FileMetadataCursor(
-                        projection == null ? DEFAULT_PROJECTION : projection,
-                        resolveReceivedDirectory());
-            } catch (FileNotFoundException e) {
-                throw new IllegalArgumentException(
-                        "Received-file directory does not exist.", e);
-            }
-        }
         File file;
         try {
             file = resolveFile(uri);
@@ -105,10 +75,6 @@ public final class ReceivedFileProvider extends ContentProvider {
             throws FileNotFoundException {
         if (!"r".equals(mode)) {
             throw new SecurityException("Received files are read-only.");
-        }
-        if (isReceivedDirectoryUri(uri)) {
-            return ParcelFileDescriptor.open(resolveReceivedDirectory(),
-                    ParcelFileDescriptor.MODE_READ_ONLY);
         }
         return ParcelFileDescriptor.open(resolveFile(uri),
                 ParcelFileDescriptor.MODE_READ_ONLY);
@@ -133,52 +99,20 @@ public final class ReceivedFileProvider extends ContentProvider {
     private File resolveFile(Uri uri) throws FileNotFoundException {
         if (uri == null || !"content".equals(uri.getScheme()) ||
                 !AUTHORITY.equals(uri.getAuthority()) ||
-                uri.getPathSegments().size() != 1 ||
-                isReceivedDirectoryUri(uri)) {
+                uri.getPathSegments().size() != 1) {
             throw new FileNotFoundException("Invalid received-file URI.");
         }
         String name = uri.getLastPathSegment();
-        File file = new File(DownloadFolders.receivedDirectory(), name);
+        File file = new File(DownloadFolders.receivedDirectory(getContext()), name);
         try {
             File canonicalFile = file.getCanonicalFile();
-            if (!canonicalFile.isFile() || !DownloadFolders.contains(canonicalFile)) {
+            if (!canonicalFile.isFile() ||
+                    !DownloadFolders.contains(getContext(), canonicalFile)) {
                 throw new FileNotFoundException("Received file does not exist.");
             }
             return canonicalFile;
         } catch (IOException e) {
             throw new FileNotFoundException("Cannot resolve received file.");
-        }
-    }
-
-    private static boolean isReceivedDirectoryUri(Uri uri) {
-        return uri != null && "content".equals(uri.getScheme()) &&
-                AUTHORITY.equals(uri.getAuthority()) &&
-                uri.getPathSegments().size() == 1 &&
-                "folder".equals(uri.getLastPathSegment());
-    }
-
-    private File resolveReceivedDirectory() throws FileNotFoundException {
-        File directory = DownloadFolders.receivedDirectory();
-        try {
-            File canonicalDirectory = directory.getCanonicalFile();
-            if (!canonicalDirectory.isDirectory() ||
-                    !isReceivedDirectory(canonicalDirectory)) {
-                throw new FileNotFoundException(
-                        "Received-file directory does not exist.");
-            }
-            return canonicalDirectory;
-        } catch (IOException e) {
-            throw new FileNotFoundException(
-                    "Cannot resolve received-file directory.");
-        }
-    }
-
-    private static boolean isReceivedDirectory(File directory) {
-        try {
-            return directory.getCanonicalPath().equals(
-                    DownloadFolders.receivedDirectory().getCanonicalPath());
-        } catch (IOException e) {
-            return false;
         }
     }
 

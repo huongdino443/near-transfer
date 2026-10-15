@@ -319,12 +319,11 @@ final class TransferProgressScreen extends LinearLayout {
                 MaterialUi.SURFACE_CONTAINER, 14));
         row.container.setFocusable(true);
         row.container.setClickable(true);
-        row.container.setContentDescription(
-                "Mở thư mục chứa tệp " + receivedFile.getName());
+        row.container.setContentDescription("Mở tệp " + receivedFile.getName());
         row.update();
         row.container.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                FileOpenHelper.openContainingFolder(getContext(), receivedFile);
+                FileOpenHelper.open(getContext(), receivedFile);
             }
         });
     }

@@ -71,6 +71,7 @@ public final class MainActivity extends Activity {
     private TextView addressText;
     private TextView statusText;
     private TextView permissionText;
+    private TextView receivedDirectoryText;
     private LinearLayout peerList;
     private LinearLayout savedPeerList;
     private View sourceRow;
@@ -497,6 +498,47 @@ public final class MainActivity extends Activity {
         page.addView(savedPeerList, fullWidth());
         renderSavedDevices();
 
+        LinearLayout receiveLocationCard = column();
+        receiveLocationCard.setPadding(dp(14), dp(13), dp(14), dp(14));
+        receiveLocationCard.setBackgroundDrawable(darkCardBackground());
+        LinearLayout.LayoutParams receiveLocationParams = fullWidth();
+        receiveLocationParams.topMargin = dp(18);
+        page.addView(receiveLocationCard, receiveLocationParams);
+
+        TextView receiveLocationTitle = text("Vị trí lưu tệp nhận", 16,
+                MaterialUi.ON_SURFACE, true);
+        receiveLocationCard.addView(receiveLocationTitle, fullWidth());
+        TextView receiveLocationDescription = text(
+                "Tệp và tin nhắn nhận được sẽ lưu vào đây.", 12,
+                MaterialUi.ON_SURFACE_VARIANT, false);
+        LinearLayout.LayoutParams receiveDescriptionParams = fullWidth();
+        receiveDescriptionParams.topMargin = dp(4);
+        receiveLocationCard.addView(receiveLocationDescription,
+                receiveDescriptionParams);
+
+        LinearLayout receiveLocationActions = new LinearLayout(this);
+        receiveLocationActions.setGravity(Gravity.CENTER_VERTICAL);
+        LinearLayout.LayoutParams receiveActionsParams = fullWidth();
+        receiveActionsParams.topMargin = dp(9);
+        receiveLocationCard.addView(receiveLocationActions, receiveActionsParams);
+        receivedDirectoryText = text("", 13, MaterialUi.ON_SURFACE, false);
+        receivedDirectoryText.setMaxLines(2);
+        receivedDirectoryText.setEllipsize(android.text.TextUtils.TruncateAt.MIDDLE);
+        receiveLocationActions.addView(receivedDirectoryText,
+                new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
+        Button changeLocationButton = button("Đổi");
+        changeLocationButton.setTextColor(MaterialUi.PRIMARY);
+        changeLocationButton.setBackgroundDrawable(MaterialUi.textButtonBackground(this));
+        receiveLocationActions.addView(changeLocationButton,
+                new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                        dp(44)));
+        changeLocationButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                showReceivedFolderEditor();
+            }
+        });
+        updateReceivedDirectoryLabel();
+
         statusText = text("", 12, MaterialUi.ON_SURFACE_VARIANT, false);
         statusText.setGravity(Gravity.CENTER);
         LinearLayout.LayoutParams footerStatusParams = fullWidth();
@@ -529,6 +571,52 @@ public final class MainActivity extends Activity {
         homeScreen = root;
         setContentView(homeScreen);
         updateQueueUi();
+    }
+
+    private void updateReceivedDirectoryLabel() {
+        if (receivedDirectoryText != null) {
+            receivedDirectoryText.setText(DownloadFolders.displayPath(this));
+        }
+    }
+
+    private void showReceivedFolderEditor() {
+        final EditText input = new EditText(this);
+        input.setSingleLine(true);
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        input.setHint("/storage/emulated/0/Download/Near Transfer");
+        input.setText(DownloadFolders.receivedDirectory(this).getAbsolutePath());
+        MaterialUi.styleEditText(this, input);
+        Dialog dialog = MaterialDialog.show(this, "Vị trí lưu tệp nhận",
+                "Nhập đường dẫn của thư mục đã có trong bộ nhớ dùng chung.",
+                input, "Hủy", null, "Lưu", new MaterialDialog.Action() {
+                    public boolean onClick(Dialog dialog) {
+                        String path = input.getText().toString().trim();
+                        if (path.length() == 0) {
+                            Toast.makeText(MainActivity.this,
+                                    "Hãy nhập đường dẫn thư mục.",
+                                    Toast.LENGTH_LONG).show();
+                            return false;
+                        }
+                        File directory = new File(path);
+                        if (!directory.isAbsolute()) {
+                            directory = new File(
+                                    DownloadFolders.externalStorageRoot(), path);
+                        }
+                        if (!DownloadFolders.setReceivedDirectory(
+                                MainActivity.this, directory)) {
+                            Toast.makeText(MainActivity.this,
+                                    "Không dùng được thư mục này. Hãy chọn thư mục có thể ghi trong bộ nhớ dùng chung.",
+                                    Toast.LENGTH_LONG).show();
+                            return false;
+                        }
+                        updateReceivedDirectoryLabel();
+                        Toast.makeText(MainActivity.this,
+                                "Đã đổi vị trí lưu tệp nhận.",
+                                Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                });
+        MaterialDialog.focusInput(dialog, input);
     }
 
     private LinearLayout.LayoutParams sourceTileParams() {
@@ -605,7 +693,7 @@ public final class MainActivity extends Activity {
             return;
         }
 
-        server = new LanShareServer(new LanShareServer.Listener() {
+        server = new LanShareServer(this, new LanShareServer.Listener() {
             public void onListening() {
                 ui.post(MainActivity.this, new Runnable() {
                     public void run() {
@@ -1675,9 +1763,9 @@ public final class MainActivity extends Activity {
     private boolean saveTextToDownloads(String text) {
         File directory;
         try {
-            directory = DownloadFolders.ensureReceivedDirectory();
+            directory = DownloadFolders.ensureReceivedDirectory(this);
         } catch (Exception e) {
-            Toast.makeText(this, "Không tạo được thư mục Download/Near Transfer/.",
+            Toast.makeText(this, "Không tạo được thư mục nhận.",
                     Toast.LENGTH_LONG).show();
             return false;
         }
@@ -1690,7 +1778,8 @@ public final class MainActivity extends Activity {
             output.flush();
             output.close();
             output = null;
-            Toast.makeText(this, "Đã lưu tại Download/Near Transfer/" +
+            Toast.makeText(this, "Đã lưu tại " +
+                    DownloadFolders.displayPath(this) + "/" +
                     destination.getName(), Toast.LENGTH_LONG).show();
             return true;
         } catch (Exception e) {
