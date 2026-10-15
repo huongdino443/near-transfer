@@ -514,6 +514,7 @@ public final class MainActivity extends Activity {
         ipFooter.setOrientation(LinearLayout.HORIZONTAL);
         ipFooter.setGravity(Gravity.CENTER_VERTICAL);
         ipFooter.setPadding(dp(18), dp(8), dp(12), dp(8));
+        ipFooter.setMinimumHeight(dp(68));
         ipFooter.setBackgroundColor(MaterialUi.SURFACE);
 
         LinearLayout addressBlock = column();
@@ -530,10 +531,10 @@ public final class MainActivity extends Activity {
         addressBlock.addView(addressText, fullWidth());
 
         LinearLayout receiveLocationButton = column();
-        receiveLocationButton.setGravity(Gravity.CENTER);
-        receiveLocationButton.setPadding(dp(10), dp(3), dp(2), dp(3));
-        receiveLocationButton.setBackgroundDrawable(
-                MaterialUi.textButtonBackground(this));
+        receiveLocationButton.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+        receiveLocationButton.setPadding(dp(10), dp(4), dp(10), dp(4));
+        receiveLocationButton.setBackgroundDrawable(MaterialUi.container(
+                this, MaterialUi.SURFACE_CONTAINER, 12));
         receiveLocationButton.setFocusable(true);
         receiveLocationButton.setClickable(true);
         receiveLocationButton.setContentDescription("Đổi vị trí lưu tệp nhận");
@@ -541,10 +542,10 @@ public final class MainActivity extends Activity {
                 new LinearLayout.LayoutParams(dp(148), ViewGroup.LayoutParams.WRAP_CONTENT));
         TextView receiveLocationTitle = text("Lưu vào", 16,
                 MaterialUi.ON_SURFACE, true);
-        receiveLocationTitle.setGravity(Gravity.CENTER);
+        receiveLocationTitle.setGravity(Gravity.RIGHT);
         receiveLocationButton.addView(receiveLocationTitle, fullWidth());
         receivedDirectoryText = text("", 11, MaterialUi.PRIMARY, false);
-        receivedDirectoryText.setGravity(Gravity.CENTER);
+        receivedDirectoryText.setGravity(Gravity.RIGHT);
         receivedDirectoryText.setSingleLine(true);
         receivedDirectoryText.setEllipsize(android.text.TextUtils.TruncateAt.MIDDLE);
         receiveLocationButton.addView(receivedDirectoryText, fullWidth());

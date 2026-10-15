@@ -38,13 +38,14 @@ final class DownloadFolders {
     static String displayPath(Context context) {
         File directory = receivedDirectory(context);
         try {
-            if (directory.getCanonicalFile().equals(
-                    defaultReceivedDirectory().getCanonicalFile())) {
-                return "Download/Near Transfer";
+            String root = externalStorageRoot().getCanonicalPath();
+            String path = directory.getCanonicalPath();
+            if (path.startsWith(root + File.separator)) {
+                return path.substring(root.length() + 1);
             }
-            return directory.getCanonicalPath();
+            return "Chọn thư mục";
         } catch (IOException e) {
-            return directory.getAbsolutePath();
+            return "Chọn thư mục";
         }
     }
 
@@ -63,7 +64,7 @@ final class DownloadFolders {
 
     static boolean setReceivedDirectory(Context context, File directory) {
         if (context == null || directory == null ||
-                !isInsideExternalStorage(directory)) {
+                !isBelowExternalStorageRoot(directory)) {
             return false;
         }
         try {
@@ -107,6 +108,19 @@ final class DownloadFolders {
             String root = externalStorageRoot().getCanonicalPath();
             String path = directory.getCanonicalPath();
             return path.equals(root) || path.startsWith(root + File.separator);
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    static boolean isBelowExternalStorageRoot(File directory) {
+        if (directory == null) {
+            return false;
+        }
+        try {
+            String root = externalStorageRoot().getCanonicalPath();
+            String path = directory.getCanonicalPath();
+            return path.startsWith(root + File.separator);
         } catch (IOException e) {
             return false;
         }

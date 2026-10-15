@@ -3,7 +3,6 @@ package com.nearbyshare.legacy;
 import android.app.Activity;
 import android.app.Dialog;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.view.Gravity;
 import android.view.View;
@@ -11,6 +10,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -48,39 +48,61 @@ final class ReceivedFolderPickerDialog {
         LinearLayout panel = new LinearLayout(activity);
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setPadding(dp(activity, 18), dp(activity, 18),
-                dp(activity, 18), dp(activity, 14));
-        panel.setBackgroundDrawable(MaterialUi.container(
-                activity, MaterialUi.SURFACE_CONTAINER, 16));
+                dp(activity, 18), dp(activity, 12));
+        panel.setBackgroundColor(MaterialUi.BACKGROUND);
 
-        TextView title = new TextView(activity);
-        title.setText("Chọn thư mục lưu");
-        title.setTextColor(MaterialUi.ON_SURFACE);
-        title.setTextSize(19);
-        title.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
-        panel.addView(title, fullWidth());
+        LinearLayout toolbar = new LinearLayout(activity);
+        toolbar.setGravity(Gravity.CENTER_VERTICAL);
+        panel.addView(toolbar, fullWidth());
 
-        final TextView currentPath = new TextView(activity);
-        currentPath.setTextColor(MaterialUi.ON_SURFACE_VARIANT);
-        currentPath.setTextSize(12);
-        currentPath.setMaxLines(2);
-        currentPath.setEllipsize(android.text.TextUtils.TruncateAt.MIDDLE);
-        LinearLayout.LayoutParams pathParams = fullWidth();
-        pathParams.topMargin = dp(activity, 8);
-        panel.addView(currentPath, pathParams);
-
-        final TextView upButton = new TextView(activity);
-        upButton.setText("↑  Thư mục cha");
-        upButton.setTextColor(MaterialUi.PRIMARY);
-        upButton.setGravity(Gravity.CENTER_VERTICAL);
-        upButton.setPadding(dp(activity, 4), dp(activity, 10),
-                dp(activity, 4), dp(activity, 10));
+        TextView upButton = new TextView(activity);
+        upButton.setText("↑");
+        upButton.setTextSize(26);
+        upButton.setTextColor(MaterialUi.ON_SURFACE);
+        upButton.setGravity(Gravity.CENTER);
+        upButton.setBackgroundDrawable(MaterialUi.surfaceButtonBackground(activity));
         upButton.setFocusable(true);
         upButton.setClickable(true);
-        LinearLayout.LayoutParams upParams = fullWidth();
-        upParams.topMargin = dp(activity, 4);
-        panel.addView(upButton, upParams);
+        toolbar.addView(upButton, new LinearLayout.LayoutParams(dp(activity, 56),
+                dp(activity, 56)));
+
+        final TextView currentPath = new TextView(activity);
+        currentPath.setGravity(Gravity.CENTER_VERTICAL);
+        currentPath.setTextColor(MaterialUi.ON_SURFACE_VARIANT);
+        currentPath.setTextSize(16);
+        currentPath.setSingleLine(true);
+        currentPath.setEllipsize(android.text.TextUtils.TruncateAt.MIDDLE);
+        currentPath.setPadding(dp(activity, 16), 0, dp(activity, 16), 0);
+        currentPath.setBackgroundDrawable(MaterialUi.container(
+                activity, MaterialUi.SURFACE_CONTAINER, 24));
+        LinearLayout.LayoutParams pathParams = new LinearLayout.LayoutParams(
+                0, dp(activity, 56), 1);
+        pathParams.leftMargin = dp(activity, 12);
+        pathParams.rightMargin = dp(activity, 12);
+        toolbar.addView(currentPath, pathParams);
+
+        final boolean[] reverseSort = new boolean[] {false};
+        TextView sortButton = new TextView(activity);
+        sortButton.setText("≡");
+        sortButton.setTextSize(24);
+        sortButton.setTextColor(MaterialUi.ON_SURFACE);
+        sortButton.setGravity(Gravity.CENTER);
+        sortButton.setBackgroundDrawable(MaterialUi.surfaceButtonBackground(activity));
+        sortButton.setFocusable(true);
+        sortButton.setClickable(true);
+        toolbar.addView(sortButton, new LinearLayout.LayoutParams(dp(activity, 56),
+                dp(activity, 56)));
+        TextView subtitle = new TextView(activity);
+        subtitle.setText("Chọn vị trí lưu");
+        subtitle.setTextColor(MaterialUi.ON_SURFACE_VARIANT);
+        subtitle.setTextSize(13);
+        LinearLayout.LayoutParams subtitleParams = fullWidth();
+        subtitleParams.topMargin = dp(activity, 12);
+        subtitleParams.bottomMargin = dp(activity, 4);
+        panel.addView(subtitle, subtitleParams);
 
         final LinearLayout directoryRows = new LinearLayout(activity);
+        final Button[] selectButtonRef = new Button[1];
         directoryRows.setOrientation(LinearLayout.VERTICAL);
         ScrollView directoryScroll = new ScrollView(activity);
         directoryScroll.setFillViewport(false);
@@ -88,8 +110,8 @@ final class ReceivedFolderPickerDialog {
         directoryScroll.addView(directoryRows, new ScrollView.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT));
-        LinearLayout.LayoutParams scrollParams = fullWidth();
-        scrollParams.height = dp(activity, 250);
+        LinearLayout.LayoutParams scrollParams = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, 0, 1);
         panel.addView(directoryScroll, scrollParams);
 
         final Runnable[] refresh = new Runnable[1];
@@ -102,7 +124,14 @@ final class ReceivedFolderPickerDialog {
                         !currentDirectory[0].equals(rootDirectory);
                 upButton.setEnabled(canGoUp);
                 upButton.setTextColor(canGoUp ?
-                        MaterialUi.PRIMARY : MaterialUi.ON_SURFACE_VARIANT);
+                        MaterialUi.ON_SURFACE : MaterialUi.ON_SURFACE_VARIANT);
+                boolean canSelect = DownloadFolders.isBelowExternalStorageRoot(
+                        currentDirectory[0]) &&
+                        currentDirectory[0].isDirectory() &&
+                        currentDirectory[0].canWrite();
+                if (selectButtonRef[0] != null) {
+                    selectButtonRef[0].setEnabled(canSelect);
+                }
                 directoryRows.removeAllViews();
 
                 File[] children = currentDirectory[0].listFiles();
@@ -118,7 +147,8 @@ final class ReceivedFolderPickerDialog {
                 }
                 Collections.sort(directories, new Comparator<File>() {
                     public int compare(File left, File right) {
-                        return left.getName().compareToIgnoreCase(right.getName());
+                        int order = left.getName().compareToIgnoreCase(right.getName());
+                        return reverseSort[0] ? -order : order;
                     }
                 });
                 if (directories.isEmpty()) {
@@ -132,20 +162,37 @@ final class ReceivedFolderPickerDialog {
                     return;
                 }
                 for (final File child : directories) {
-                    TextView row = new TextView(activity);
-                    row.setText(child.getName());
-                    row.setTextColor(MaterialUi.ON_SURFACE);
-                    row.setTextSize(15);
+                    LinearLayout row = new LinearLayout(activity);
                     row.setGravity(Gravity.CENTER_VERTICAL);
-                    row.setMinHeight(dp(activity, 48));
-                    row.setPadding(dp(activity, 10), dp(activity, 6),
-                            dp(activity, 10), dp(activity, 6));
-                    row.setBackgroundDrawable(MaterialUi.surfaceButtonBackground(activity));
+                    row.setPadding(dp(activity, 12), dp(activity, 8),
+                            dp(activity, 8), dp(activity, 8));
+                    row.setBackgroundDrawable(MaterialUi.textButtonBackground(activity));
                     row.setFocusable(true);
                     row.setClickable(true);
-                    LinearLayout.LayoutParams rowParams = fullWidth();
-                    rowParams.bottomMargin = dp(activity, 4);
-                    directoryRows.addView(row, rowParams);
+                    directoryRows.addView(row, new LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT, dp(activity, 76)));
+                    FrameLayout iconSurface = new FrameLayout(activity);
+                    iconSurface.setBackgroundDrawable(MaterialUi.container(
+                            activity, MaterialUi.SURFACE_HIGH, 12));
+                    row.addView(iconSurface, new LinearLayout.LayoutParams(
+                            dp(activity, 56), dp(activity, 56)));
+                    MaterialIconView folderIcon = new MaterialIconView(
+                            activity, MaterialIconView.FOLDER);
+                    folderIcon.setTint(MaterialUi.ON_SURFACE_VARIANT);
+                    iconSurface.addView(folderIcon, new FrameLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT));
+                    TextView name = new TextView(activity);
+                    name.setText(child.getName() + "/");
+                    name.setTextColor(MaterialUi.ON_SURFACE);
+                    name.setTextSize(16);
+                    name.setGravity(Gravity.CENTER_VERTICAL);
+                    name.setSingleLine(true);
+                    name.setEllipsize(android.text.TextUtils.TruncateAt.END);
+                    LinearLayout.LayoutParams nameParams = new LinearLayout.LayoutParams(
+                            0, ViewGroup.LayoutParams.MATCH_PARENT, 1);
+                    nameParams.leftMargin = dp(activity, 16);
+                    row.addView(name, nameParams);
                     row.setOnClickListener(new View.OnClickListener() {
                         public void onClick(View view) {
                             currentDirectory[0] = canonical(child);
@@ -153,10 +200,20 @@ final class ReceivedFolderPickerDialog {
                             directoryScroll.scrollTo(0, 0);
                         }
                     });
+                    View divider = new View(activity);
+                    divider.setBackgroundColor(MaterialUi.SURFACE_HIGH);
+                    directoryRows.addView(divider, new LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT, dp(activity, 1)));
                 }
             }
         };
 
+        sortButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                reverseSort[0] = !reverseSort[0];
+                refresh[0].run();
+            }
+        });
         upButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 File parent = currentDirectory[0].getParentFile();
@@ -176,10 +233,12 @@ final class ReceivedFolderPickerDialog {
 
         TextView cancelButton = new TextView(activity);
         cancelButton.setText("Hủy");
-        cancelButton.setTextColor(MaterialUi.PRIMARY);
+        cancelButton.setTextColor(MaterialUi.ON_SURFACE);
         cancelButton.setGravity(Gravity.CENTER);
-        cancelButton.setMinWidth(dp(activity, 72));
+        cancelButton.setMinWidth(dp(activity, 84));
         cancelButton.setMinHeight(dp(activity, 48));
+        cancelButton.setPadding(dp(activity, 14), 0, dp(activity, 14), 0);
+        cancelButton.setBackgroundDrawable(MaterialUi.surfaceButtonBackground(activity));
         cancelButton.setFocusable(true);
         cancelButton.setClickable(true);
         actions.addView(cancelButton);
@@ -190,6 +249,7 @@ final class ReceivedFolderPickerDialog {
         });
 
         Button selectButton = new Button(activity);
+        selectButtonRef[0] = selectButton;
         selectButton.setText("Chọn thư mục này");
         MaterialUi.stylePrimaryButton(activity, selectButton);
         LinearLayout.LayoutParams selectParams = new LinearLayout.LayoutParams(
@@ -212,12 +272,10 @@ final class ReceivedFolderPickerDialog {
             window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
             WindowManager.LayoutParams params = window.getAttributes();
-            params.width = Math.min(dp(activity, 420),
-                    activity.getResources().getDisplayMetrics().widthPixels -
-                            dp(activity, 32));
-            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
             params.gravity = Gravity.CENTER;
-            params.dimAmount = 0.64f;
+            params.dimAmount = 0f;
             window.setAttributes(params);
         }
         dialog.show();

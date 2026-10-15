@@ -19,6 +19,7 @@ final class MaterialIconView extends View {
     static final int REMOVE = 9;
     static final int NEXT = 10;
     static final int BACK = 11;
+    static final int FOLDER = 12;
 
     private int icon;
     private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -80,6 +81,8 @@ final class MaterialIconView extends View {
             drawNext(canvas);
         } else if (icon == BACK) {
             drawBack(canvas);
+        } else if (icon == FOLDER) {
+            drawFolder(canvas);
         }
         canvas.restore();
     }
@@ -211,6 +214,24 @@ final class MaterialIconView extends View {
         path.lineTo(11f, 5f);
         path.moveTo(4f, 12f);
         path.lineTo(11f, 19f);
+        canvas.drawPath(path, paint);
+    }
+
+    private void drawFolder(Canvas canvas) {
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawRoundRect(new RectF(3f, 6f, 21f, 20f), 2f, 2f, paint);
+        paint.setColor(MaterialUi.SURFACE_HIGH);
+        canvas.drawRoundRect(new RectF(4.5f, 9f, 19.5f, 18.5f), 1.5f, 1.5f, paint);
+        paint.setStyle(Paint.Style.STROKE);
+        paint.setColor(tint);
+        path.reset();
+        path.moveTo(3f, 8f);
+        path.lineTo(3f, 6f);
+        path.quadTo(3f, 5f, 4f, 5f);
+        path.lineTo(9f, 5f);
+        path.lineTo(11f, 7f);
+        path.lineTo(20f, 7f);
+        path.quadTo(21f, 7f, 21f, 8f);
         canvas.drawPath(path, paint);
     }
 }
