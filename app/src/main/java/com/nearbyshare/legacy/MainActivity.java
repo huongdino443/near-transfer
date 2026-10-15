@@ -381,9 +381,11 @@ public final class MainActivity extends Activity {
         LinearLayout.LayoutParams summaryParams = fullWidth();
         summaryParams.topMargin = dp(3);
         queueCard.addView(queueSummary, summaryParams);
-        queueItems = column();
+        queueItems = new LinearLayout(this);
+        queueItems.setOrientation(LinearLayout.HORIZONTAL);
+        queueItems.setGravity(Gravity.CENTER_VERTICAL);
         LinearLayout.LayoutParams itemsParams = fullWidth();
-        itemsParams.topMargin = dp(8);
+        itemsParams.topMargin = dp(9);
         queueCard.addView(queueItems, itemsParams);
 
         permissionText = text("", 14, MaterialUi.ERROR, true);
@@ -1334,62 +1336,92 @@ public final class MainActivity extends Activity {
         if (count == 0) {
             return;
         }
-        queueSummary.setText(hasText ? "1 tin nhắn · không gộp chung với tập tin" :
+        queueSummary.setText(hasText ?
+                "1 tin nhắn · không gộp chung với tập tin" :
                 count + " tập tin đã chọn");
         if (hasText) {
-            addQueueRow("Tin nhắn văn bản", pendingText, -1);
+            addQueuePreviewTile(MaterialIconView.CLIPBOARD,
+                    "Tin nhắn văn bản");
         } else {
-            for (int i = 0; i < pendingUris.size(); i++) {
-                addQueueRow(FileSender.displayName(this, pendingUris.get(i)),
-                        null, i);
+            int visibleCount = Math.min(3, pendingUris.size());
+            for (int i = 0; i < visibleCount; i++) {
+                Uri uri = pendingUris.get(i);
+                addQueuePreviewTile(queueIconForUri(uri),
+                        FileSender.displayName(this, uri));
             }
         }
+        String expandLabel = count > 3 ? "+" + (count - 3) : "›";
+        addQueueExpandButton(expandLabel, count);
     }
 
-    private void addQueueRow(String label, String preview, final int index) {
-        LinearLayout row = new LinearLayout(this);
-        row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setGravity(Gravity.CENTER_VERTICAL);
-        LinearLayout.LayoutParams rowParams = fullWidth();
-        rowParams.topMargin = dp(5);
-        queueItems.addView(row, rowParams);
+    private void addQueuePreviewTile(int icon, String description) {
+        LinearLayout tile = new LinearLayout(this);
+        tile.setGravity(Gravity.CENTER);
+        tile.setBackgroundDrawable(MaterialUi.rounded(this,
+                MaterialUi.SURFACE_HIGH, 12));
+        tile.setContentDescription(description);
+        MaterialIconView iconView = new MaterialIconView(this, icon);
+        iconView.setTint(MaterialUi.ON_SURFACE);
+        tile.addView(iconView, new LinearLayout.LayoutParams(dp(28), dp(28)));
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                dp(48), dp(48));
+        params.rightMargin = dp(7);
+        queueItems.addView(tile, params);
+    }
 
-        LinearLayout details = column();
-        row.addView(details, new LinearLayout.LayoutParams(
-                0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-        details.addView(text(label, 14, MaterialUi.ON_SURFACE, true));
-        if (preview != null) {
-            String snippet = preview.replace('\n', ' ').replace('\r', ' ').trim();
-            if (snippet.length() > 90) {
-                snippet = snippet.substring(0, 87) + "…";
-            }
-            TextView previewView = text(snippet, 12,
-                    MaterialUi.ON_SURFACE_VARIANT, false);
-            previewView.setLines(2);
-            details.addView(previewView, fullWidth());
-        }
-
-        Button remove = button("Gỡ");
-        remove.setTextSize(TypedValue.COMPLEX_UNIT_SP, 13);
-        remove.setTextColor(MaterialUi.PRIMARY);
-        remove.setGravity(Gravity.CENTER_VERTICAL | Gravity.RIGHT);
-        remove.setPadding(dp(12), dp(8), dp(8), dp(8));
-        remove.setBackgroundDrawable(MaterialUi.textButtonBackground(this));
-        remove.setContentDescription("Gỡ " + label + " khỏi hàng chờ");
-        LinearLayout.LayoutParams removeParams = new LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, dp(42));
-        removeParams.leftMargin = dp(6);
-        row.addView(remove, removeParams);
-        remove.setOnClickListener(new View.OnClickListener() {
+    private void addQueueExpandButton(String label, final int count) {
+        TextView expand = text(label, label.length() > 2 ? 13 : 25,
+                MaterialUi.PRIMARY, true);
+        expand.setGravity(Gravity.CENTER);
+        expand.setPadding(dp(7), 0, dp(7), 0);
+        expand.setMinWidth(dp(48));
+        expand.setMinHeight(dp(48));
+        expand.setBackgroundDrawable(MaterialUi.textButtonBackground(this));
+        expand.setContentDescription("Mở danh sách " + count +
+                (pendingText == null ? " tệp đã chọn" : " tin nhắn đã chọn"));
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, dp(48));
+        queueItems.addView(expand, params);
+        expand.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                if (index < 0) {
-                    pendingText = null;
-                } else if (index < pendingUris.size()) {
-                    pendingUris.remove(index);
-                }
-                updateQueueUi();
+                showSelectedFilesOverlay();
             }
         });
+    }
+
+    private int queueIconForUri(Uri uri) {
+        try {
+            String mime = getContentResolver().getType(uri);
+            if (mime != null && (mime.startsWith("image/") ||
+                    mime.startsWith("video/") || mime.startsWith("audio/"))) {
+                return MaterialIconView.MEDIA;
+            }
+        } catch (Exception ignored) {
+        }
+        return MaterialIconView.FILE;
+    }
+
+    private void showSelectedFilesOverlay() {
+        SelectedFilesOverlay.show(this, pendingUris, pendingText,
+                new SelectedFilesOverlay.Listener() {
+                    public void onRemoveFile(int index) {
+                        if (index >= 0 && index < pendingUris.size()) {
+                            pendingUris.remove(index);
+                            updateQueueUi();
+                        }
+                    }
+
+                    public void onRemoveText() {
+                        pendingText = null;
+                        updateQueueUi();
+                    }
+
+                    public void onClearAll() {
+                        pendingUris.clear();
+                        pendingText = null;
+                        updateQueueUi();
+                    }
+                });
     }
 
     private void beginTextComposer() {
