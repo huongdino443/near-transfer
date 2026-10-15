@@ -63,7 +63,7 @@ final class SelectedFilesOverlay {
         FrameLayout.LayoutParams backIconParams = new FrameLayout.LayoutParams(
                 dp(activity, 32), dp(activity, 32),
                 Gravity.LEFT | Gravity.BOTTOM);
-        backIconParams.bottomMargin = dp(activity, 7);
+        backIconParams.bottomMargin = dp(activity, 8);
         back.addView(backIcon, backIconParams);
         header.addView(back, new LinearLayout.LayoutParams(dp(activity, 44),
                 dp(activity, 52)));
@@ -72,7 +72,7 @@ final class SelectedFilesOverlay {
         title.setGravity(Gravity.CENTER_VERTICAL);
         LinearLayout.LayoutParams titleParams =
                 new LinearLayout.LayoutParams(0, dp(activity, 52), 1);
-        titleParams.leftMargin = dp(activity, 4);
+        titleParams.leftMargin = dp(activity, 2);
         header.addView(title, titleParams);
         back.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
