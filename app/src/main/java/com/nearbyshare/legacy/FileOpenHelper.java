@@ -13,7 +13,7 @@ final class FileOpenHelper {
     private FileOpenHelper() {
     }
 
-    static void open(Context context, File file) {
+    static void openContainingFolder(Context context, File file) {
         if (context == null) {
             return;
         }
@@ -23,26 +23,34 @@ final class FileOpenHelper {
             return;
         }
 
-        openWithApp(context, file);
-    }
-
-    private static void openWithApp(Context context, File file) {
-        Uri uri = ReceivedFileProvider.uriForFile(file);
-        String mimeType = context.getContentResolver().getType(uri);
+        File folder = file.getParentFile();
+        if (folder == null || !folder.isDirectory()) {
+            Toast.makeText(context, "Không tìm thấy thư mục chứa tệp.",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+        Uri uri;
+        try {
+            uri = ReceivedFileProvider.uriForReceivedDirectory(folder);
+        } catch (IllegalArgumentException e) {
+            Toast.makeText(context, "Không tìm thấy thư mục chứa tệp.",
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(uri, mimeType);
+        intent.setDataAndType(uri, "*/*");
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         if (!(context instanceof Activity)) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         }
 
         try {
-            context.startActivity(Intent.createChooser(intent, "Mở tệp bằng"));
+            context.startActivity(intent);
         } catch (ActivityNotFoundException e) {
-            Toast.makeText(context, "Không có ứng dụng phù hợp để mở tệp này.",
+            Toast.makeText(context, "Không có ứng dụng tương thích để mở thư mục này.",
                     Toast.LENGTH_LONG).show();
         } catch (SecurityException e) {
-            Toast.makeText(context, "Không thể cấp quyền mở tệp này.",
+            Toast.makeText(context, "Không thể cấp quyền mở thư mục này.",
                     Toast.LENGTH_LONG).show();
         }
     }
