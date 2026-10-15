@@ -1422,10 +1422,11 @@ public final class MainActivity extends Activity {
         queueTextPreview.addView(details, new LinearLayout.LayoutParams(
                 0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
 
-        Button remove = button("Gỡ");
-        remove.setTextColor(MaterialUi.PRIMARY);
-        remove.setGravity(Gravity.CENTER);
-        remove.setPadding(dp(12), dp(8), dp(8), dp(8));
+        TextView remove = text("Gỡ", 14, MaterialUi.PRIMARY, false);
+        remove.setGravity(Gravity.RIGHT | Gravity.CENTER_VERTICAL);
+        remove.setMinWidth(dp(64));
+        remove.setMinHeight(dp(44));
+        remove.setPadding(dp(8), 0, dp(8), 0);
         remove.setBackgroundDrawable(MaterialUi.textButtonBackground(this));
         remove.setContentDescription("Gỡ tin nhắn khỏi hàng chờ");
         queueTextPreview.addView(remove, new LinearLayout.LayoutParams(
