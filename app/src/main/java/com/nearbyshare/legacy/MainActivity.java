@@ -1207,59 +1207,12 @@ public final class MainActivity extends Activity {
     }
 
     private void showSourceMenu() {
-        final Dialog[] dialogRef = new Dialog[1];
-        final int[] sources = new int[] {1, 2, 3, 4};
-        final int[] icons = new int[] {
-                MaterialIconView.FILE, MaterialIconView.MEDIA,
-                MaterialIconView.CLIPBOARD, MaterialIconView.EDIT
-        };
-        final String[] labels = new String[] {"Tệp", "Media", "Dán", "Nhập"};
-
-        LinearLayout grid = column();
-        int tileSize = sourceMenuTileSize();
-        grid.addView(sourceChoiceRow(dialogRef, sources, icons, labels, 0, tileSize),
-                fullWidth());
-        LinearLayout.LayoutParams secondRowParams = fullWidth();
-        secondRowParams.topMargin = dp(10);
-        grid.addView(sourceChoiceRow(dialogRef, sources, icons, labels, 2, tileSize),
-                secondRowParams);
-        dialogRef[0] = MaterialDialog.show(this, "Thêm nội dung", null, grid,
-                "Hủy", null, null, null);
-    }
-
-    private LinearLayout sourceChoiceRow(final Dialog[] dialogRef,
-                                         int[] sources, int[] icons,
-                                         String[] labels, int start, int tileSize) {
-        LinearLayout row = new LinearLayout(this);
-        row.setOrientation(LinearLayout.HORIZONTAL);
-        for (int offset = 0; offset < 2; offset++) {
-            final int source = sources[start + offset];
-            View tile = sourceTile(icons[start + offset], labels[start + offset],
-                    new View.OnClickListener() {
-                        public void onClick(View view) {
-                            if (dialogRef[0] != null) {
-                                dialogRef[0].dismiss();
-                            }
-                            handleSourceChoice(source);
-                        }
-                    }, tileSize < dp(84));
-            tile.setBackgroundDrawable(MaterialUi.stateBackground(this,
-                    MaterialUi.SURFACE_HIGH, MaterialUi.SURFACE_CONTAINER,
-                    MaterialUi.SURFACE_HIGH, 12));
-            LinearLayout.LayoutParams tileParams = new LinearLayout.LayoutParams(
-                    0, tileSize, 1);
-            tileParams.leftMargin = dp(4);
-            tileParams.rightMargin = dp(4);
-            row.addView(tile, tileParams);
-        }
-        return row;
-    }
-
-    private int sourceMenuTileSize() {
-        int dialogWidth = Math.min(dp(500),
-                getResources().getDisplayMetrics().widthPixels - dp(40));
-        int contentWidth = dialogWidth - dp(44);
-        return Math.max(dp(64), (contentWidth - dp(16)) / 2);
+        MaterialDialog.showSourceMenu(this,
+                new MaterialDialog.ChoiceListener() {
+                    public void onChoice(int index) {
+                        handleSourceChoice(index + 1);
+                    }
+                });
     }
 
     private void beginPicker(final boolean mediaOnly) {

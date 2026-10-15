@@ -214,6 +214,158 @@ final class MaterialDialog {
         return dialog;
     }
 
+    static Dialog showSourceMenu(Context context,
+                                 final ChoiceListener listener) {
+        final Dialog dialog = new Dialog(context);
+        LinearLayout panel = new LinearLayout(context);
+        panel.setOrientation(LinearLayout.VERTICAL);
+        panel.setPadding(dp(context, 20), dp(context, 18),
+                dp(context, 20), dp(context, 18));
+        panel.setBackgroundDrawable(MaterialUi.container(context,
+                MaterialUi.SURFACE_CONTAINER, 16));
+
+        LinearLayout header = new LinearLayout(context);
+        header.setOrientation(LinearLayout.HORIZONTAL);
+        header.setGravity(Gravity.CENTER_VERTICAL);
+        panel.addView(header, fullWidth());
+
+        TextView title = new TextView(context);
+        title.setText("Thêm nội dung");
+        title.setTextColor(MaterialUi.ON_SURFACE);
+        title.setTextSize(21);
+        title.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+        header.addView(title, new LinearLayout.LayoutParams(
+                0, dp(context, 48), 1));
+
+        TextView close = new TextView(context);
+        close.setText("×");
+        close.setTextSize(28);
+        close.setTextColor(MaterialUi.ON_SURFACE_VARIANT);
+        close.setGravity(Gravity.CENTER);
+        close.setContentDescription("Đóng chọn nội dung");
+        close.setBackgroundDrawable(MaterialUi.textButtonBackground(context));
+        header.addView(close, new LinearLayout.LayoutParams(
+                dp(context, 44), dp(context, 44)));
+        close.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+        TextView subtitle = new TextView(context);
+        subtitle.setText("Chọn cách thêm vào hàng chờ");
+        subtitle.setTextColor(MaterialUi.ON_SURFACE_VARIANT);
+        subtitle.setTextSize(13);
+        LinearLayout.LayoutParams subtitleParams = fullWidth();
+        subtitleParams.topMargin = dp(context, 2);
+        panel.addView(subtitle, subtitleParams);
+
+        final String[] labels = new String[] {"Tệp", "Media", "Dán", "Nhập"};
+        final String[] descriptions = new String[] {
+                "Chọn tài liệu hoặc tệp bất kỳ",
+                "Chọn ảnh và video",
+                "Dùng nội dung đã sao chép",
+                "Soạn tin nhắn văn bản"
+        };
+        final int[] icons = new int[] {
+                MaterialIconView.FILE, MaterialIconView.MEDIA,
+                MaterialIconView.CLIPBOARD, MaterialIconView.EDIT
+        };
+        LinearLayout options = new LinearLayout(context);
+        options.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams optionsParams = fullWidth();
+        optionsParams.topMargin = dp(context, 16);
+        panel.addView(options, optionsParams);
+
+        for (int i = 0; i < labels.length; i++) {
+            final int index = i;
+            LinearLayout row = new LinearLayout(context);
+            row.setOrientation(LinearLayout.HORIZONTAL);
+            row.setGravity(Gravity.CENTER_VERTICAL);
+            row.setPadding(dp(context, 12), dp(context, 8),
+                    dp(context, 14), dp(context, 8));
+            row.setBackgroundDrawable(MaterialUi.stateBackground(context,
+                    MaterialUi.SURFACE_HIGH, MaterialUi.SURFACE_CONTAINER,
+                    MaterialUi.SURFACE_HIGH, 12));
+            row.setFocusable(true);
+            row.setClickable(true);
+            row.setContentDescription(labels[i] + ". " + descriptions[i]);
+
+            LinearLayout iconTile = new LinearLayout(context);
+            iconTile.setGravity(Gravity.CENTER);
+            iconTile.setBackgroundDrawable(MaterialUi.rounded(context,
+                    MaterialUi.SURFACE_CONTAINER, 12));
+            MaterialIconView icon = new MaterialIconView(context, icons[i]);
+            icon.setTint(MaterialUi.PRIMARY);
+            iconTile.addView(icon, new LinearLayout.LayoutParams(
+                    dp(context, 24), dp(context, 24)));
+            row.addView(iconTile, new LinearLayout.LayoutParams(
+                    dp(context, 44), dp(context, 44)));
+
+            LinearLayout details = new LinearLayout(context);
+            details.setOrientation(LinearLayout.VERTICAL);
+            details.setGravity(Gravity.CENTER_VERTICAL);
+            LinearLayout.LayoutParams detailsParams =
+                    new LinearLayout.LayoutParams(0,
+                            ViewGroup.LayoutParams.WRAP_CONTENT, 1);
+            detailsParams.leftMargin = dp(context, 12);
+            row.addView(details, detailsParams);
+
+            TextView label = new TextView(context);
+            label.setText(labels[i]);
+            label.setTextColor(MaterialUi.ON_SURFACE);
+            label.setTextSize(15);
+            label.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+            details.addView(label, fullWidth());
+            TextView description = new TextView(context);
+            description.setText(descriptions[i]);
+            description.setTextColor(MaterialUi.ON_SURFACE_VARIANT);
+            description.setTextSize(12);
+            LinearLayout.LayoutParams descriptionParams = fullWidth();
+            descriptionParams.topMargin = dp(context, 2);
+            details.addView(description, descriptionParams);
+
+            LinearLayout.LayoutParams rowParams = fullWidth();
+            rowParams.topMargin = dp(context, i == 0 ? 0 : 8);
+            options.addView(row, rowParams);
+            row.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View view) {
+                    dialog.dismiss();
+                    if (listener != null) {
+                        listener.onChoice(index);
+                    }
+                }
+            });
+        }
+
+        ScrollView dialogScroll = new ScrollView(context);
+        dialogScroll.setFillViewport(false);
+        dialogScroll.setVerticalScrollBarEnabled(false);
+        dialogScroll.setClipToPadding(false);
+        dialogScroll.addView(panel, new ScrollView.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT));
+        dialog.setContentView(dialogScroll);
+        dialog.setCancelable(true);
+        dialog.setCanceledOnTouchOutside(true);
+        Window window = dialog.getWindow();
+        if (window != null) {
+            window.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            window.addFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+            WindowManager.LayoutParams params = window.getAttributes();
+            int availableWidth = context.getResources().getDisplayMetrics().widthPixels -
+                    dp(context, 40);
+            params.width = Math.min(dp(context, 500), availableWidth);
+            params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            params.gravity = Gravity.CENTER;
+            params.dimAmount = 0.64f;
+            window.setAttributes(params);
+            window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        }
+        dialog.show();
+        return dialog;
+    }
+
     private static Button actionButton(Context context, String label,
                                        boolean primary) {
         Button button = new Button(context);
