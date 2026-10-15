@@ -36,7 +36,7 @@ final class MaterialDialog {
         LinearLayout panel = new LinearLayout(context);
         panel.setOrientation(LinearLayout.VERTICAL);
         panel.setPadding(dp(context, 22), dp(context, 22),
-                dp(context, 22), dp(context, 16));
+                dp(context, 22), dp(context, 22));
         panel.setBackgroundDrawable(MaterialUi.container(context,
                 MaterialUi.SURFACE_CONTAINER, 16));
 
@@ -281,7 +281,7 @@ final class MaterialDialog {
             row.setOrientation(LinearLayout.HORIZONTAL);
             row.setGravity(Gravity.CENTER_VERTICAL);
             row.setPadding(dp(context, 12), dp(context, 8),
-                    dp(context, 14), dp(context, 8));
+                    dp(context, 12), dp(context, 12));
             row.setBackgroundDrawable(MaterialUi.stateBackground(context,
                     MaterialUi.SURFACE_HIGH, MaterialUi.SURFACE_CONTAINER,
                     MaterialUi.SURFACE_HIGH, 12));
@@ -380,7 +380,7 @@ final class MaterialDialog {
         if (primary) {
             button.setTextColor(MaterialUi.ON_PRIMARY);
             button.setBackgroundDrawable(MaterialUi.primaryButtonBackground(context));
-        } else if ("Hủy".equals(label)) {
+        } else if ("Hủy".equals(label) || "Từ chối".equals(label)) {
             button.setTextColor(MaterialUi.ON_SURFACE);
             button.setBackgroundDrawable(MaterialUi.stateBackground(context,
                     MaterialUi.SURFACE_HIGH, MaterialUi.SURFACE_CONTAINER,

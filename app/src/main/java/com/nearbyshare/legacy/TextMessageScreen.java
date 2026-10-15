@@ -26,7 +26,7 @@ final class TextMessageScreen extends ScrollView {
         page.setOrientation(LinearLayout.VERTICAL);
         page.setGravity(Gravity.CENTER_HORIZONTAL);
         page.setPadding(dp(context, 22), dp(context, 30),
-                dp(context, 24), dp(context, 28));
+                dp(context, 22), dp(context, 22));
         addView(page, new ScrollView.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
@@ -69,7 +69,7 @@ final class TextMessageScreen extends ScrollView {
         content.setTextSize(15);
         content.setGravity(Gravity.TOP | Gravity.LEFT);
         content.setPadding(dp(context, 18), dp(context, 16),
-                dp(context, 18), dp(context, 16));
+                dp(context, 18), dp(context, 18));
         content.setBackgroundDrawable(MaterialUi.container(context,
                 MaterialUi.SURFACE_CONTAINER, 12));
         LinearLayout.LayoutParams contentParams = new LinearLayout.LayoutParams(

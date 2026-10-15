@@ -45,7 +45,7 @@ final class SelectedFilesOverlay {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setBackgroundColor(MaterialUi.BACKGROUND);
         root.setPadding(dp(activity, 20), dp(activity, 8),
-                dp(activity, 20), dp(activity, 12));
+                dp(activity, 20), dp(activity, 20));
 
         LinearLayout header = new LinearLayout(activity);
         header.setOrientation(LinearLayout.HORIZONTAL);
@@ -213,7 +213,7 @@ final class SelectedFilesOverlay {
         row.setOrientation(LinearLayout.HORIZONTAL);
         row.setGravity(Gravity.CENTER_VERTICAL);
         row.setPadding(dp(activity, 11), dp(activity, 10),
-                dp(activity, 8), dp(activity, 10));
+                dp(activity, 11), dp(activity, 11));
         row.setBackgroundDrawable(MaterialUi.container(activity,
                 MaterialUi.SURFACE_CONTAINER, 17));
 

@@ -322,7 +322,7 @@ public final class MainActivity extends Activity {
         scroll.setBackgroundColor(MaterialUi.BACKGROUND);
 
         LinearLayout page = column();
-        page.setPadding(dp(20), dp(26), dp(20), dp(18));
+        page.setPadding(dp(20), dp(26), dp(20), dp(20));
         scroll.addView(page, new ScrollView.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         root.addView(scroll, new LinearLayout.LayoutParams(
@@ -435,7 +435,7 @@ public final class MainActivity extends Activity {
         });
 
         permissionText = text("", 14, MaterialUi.ERROR, true);
-        permissionText.setPadding(dp(16), dp(14), dp(16), dp(14));
+        permissionText.setPadding(dp(16), dp(14), dp(16), dp(16));
         permissionText.setBackgroundDrawable(cardBackground(MaterialUi.ERROR_CONTAINER));
         permissionText.setVisibility(View.GONE);
         LinearLayout.LayoutParams permissionParams = fullWidth();
@@ -511,7 +511,7 @@ public final class MainActivity extends Activity {
 
         LinearLayout ipFooter = column();
         ipFooter.setGravity(Gravity.CENTER);
-        ipFooter.setPadding(dp(20), dp(9), dp(20), dp(10));
+        ipFooter.setPadding(dp(20), dp(9), dp(20), dp(20));
         ipFooter.setBackgroundColor(MaterialUi.SURFACE);
 
         TextView addressLabel = text("Địa chỉ IP của máy này", 12,
@@ -678,6 +678,7 @@ public final class MainActivity extends Activity {
                             screen.completeItem(0);
                             screen.finish("Đã nhận văn bản.");
                         }
+                        setStatus("");
                         showTextMessage(senderName, text);
                     }
                 });
@@ -879,7 +880,7 @@ public final class MainActivity extends Activity {
                     "Chưa thấy thiết bị nào. Mở Near Transfer trên máy còn lại hoặc nhập địa chỉ trực tiếp.";
             TextView empty = text(emptyMessage, 14,
                     MaterialUi.ON_SURFACE_VARIANT, false);
-            empty.setPadding(dp(14), dp(15), dp(14), dp(15));
+            empty.setPadding(dp(14), dp(15), dp(14), dp(14));
             empty.setBackgroundDrawable(darkCardBackground());
             peerList.addView(empty, fullWidth());
             return;
@@ -889,7 +890,7 @@ public final class MainActivity extends Activity {
             LinearLayout row = new LinearLayout(this);
             row.setOrientation(LinearLayout.HORIZONTAL);
             row.setGravity(Gravity.CENTER_VERTICAL);
-            row.setPadding(dp(13), dp(10), dp(10), dp(10));
+            row.setPadding(dp(13), dp(10), dp(13), dp(13));
             row.setBackgroundDrawable(MaterialUi.stateBackground(this,
                     MaterialUi.SURFACE_CONTAINER, MaterialUi.SURFACE_HIGH,
                     MaterialUi.SURFACE_CONTAINER, 10));
@@ -958,7 +959,7 @@ public final class MainActivity extends Activity {
             TextView empty = text(
                     "Chưa có thiết bị. Chạm biểu tượng lưu ở danh sách phía trên.",
                     14, MaterialUi.ON_SURFACE_VARIANT, false);
-            empty.setPadding(dp(14), dp(15), dp(14), dp(15));
+            empty.setPadding(dp(14), dp(15), dp(14), dp(14));
             empty.setBackgroundDrawable(darkCardBackground());
             savedPeerList.addView(empty, fullWidth());
             return;
@@ -969,7 +970,7 @@ public final class MainActivity extends Activity {
             LinearLayout row = new LinearLayout(this);
             row.setOrientation(LinearLayout.HORIZONTAL);
             row.setGravity(Gravity.CENTER_VERTICAL);
-            row.setPadding(dp(13), dp(10), dp(10), dp(10));
+            row.setPadding(dp(13), dp(10), dp(13), dp(13));
             row.setBackgroundDrawable(MaterialUi.stateBackground(this,
                     MaterialUi.SURFACE_CONTAINER, MaterialUi.SURFACE_HIGH,
                     MaterialUi.SURFACE_CONTAINER, 10));

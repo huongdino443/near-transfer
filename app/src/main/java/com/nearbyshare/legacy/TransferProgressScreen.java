@@ -68,7 +68,7 @@ final class TransferProgressScreen extends LinearLayout {
         LinearLayout header = new LinearLayout(context);
         header.setOrientation(LinearLayout.VERTICAL);
         header.setPadding(dp(context, 20), dp(context, 22),
-                dp(context, 20), dp(context, 10));
+                dp(context, 20), dp(context, 20));
 
         heading = new TextView(context);
         heading.setText(title);
@@ -90,7 +90,7 @@ final class TransferProgressScreen extends LinearLayout {
         LinearLayout fileList = new LinearLayout(context);
         fileList.setOrientation(LinearLayout.VERTICAL);
         fileList.setPadding(dp(context, 20), dp(context, 2),
-                dp(context, 20), dp(context, 16));
+                dp(context, 20), dp(context, 20));
         listScroll.addView(fileList, new ScrollView.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
@@ -225,7 +225,7 @@ final class TransferProgressScreen extends LinearLayout {
         footer = new LinearLayout(context);
         footer.setOrientation(LinearLayout.VERTICAL);
         footer.setPadding(dp(context, 20), dp(context, 13),
-                dp(context, 20), dp(context, 14));
+                dp(context, 20), dp(context, 20));
         footer.setBackgroundColor(MaterialUi.SURFACE);
 
         actionRow = new LinearLayout(context);
