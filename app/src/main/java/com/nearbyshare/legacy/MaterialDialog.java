@@ -234,6 +234,7 @@ final class MaterialDialog {
         title.setTextColor(MaterialUi.ON_SURFACE);
         title.setTextSize(21);
         title.setTypeface(Typeface.DEFAULT, Typeface.BOLD);
+        title.setGravity(Gravity.CENTER_VERTICAL);
         header.addView(title, new LinearLayout.LayoutParams(
                 0, dp(context, 48), 1));
 
@@ -242,23 +243,17 @@ final class MaterialDialog {
         close.setTextSize(28);
         close.setTextColor(MaterialUi.ON_SURFACE_VARIANT);
         close.setGravity(Gravity.CENTER);
+        close.setFocusable(false);
+        close.setClickable(true);
         close.setContentDescription("Đóng chọn nội dung");
-        close.setBackgroundDrawable(MaterialUi.textButtonBackground(context));
+        close.setBackgroundDrawable(null);
         header.addView(close, new LinearLayout.LayoutParams(
-                dp(context, 44), dp(context, 44)));
+                dp(context, 44), dp(context, 48)));
         close.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
                 dialog.dismiss();
             }
         });
-
-        TextView subtitle = new TextView(context);
-        subtitle.setText("Chọn cách thêm vào hàng chờ");
-        subtitle.setTextColor(MaterialUi.ON_SURFACE_VARIANT);
-        subtitle.setTextSize(13);
-        LinearLayout.LayoutParams subtitleParams = fullWidth();
-        subtitleParams.topMargin = dp(context, 2);
-        panel.addView(subtitle, subtitleParams);
 
         final String[] labels = new String[] {"Tệp", "Media", "Dán", "Nhập"};
         final String[] descriptions = new String[] {
