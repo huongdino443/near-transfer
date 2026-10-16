@@ -10,7 +10,6 @@
 - Added a receive-location card that shows the active folder and opens a full-screen folder browser. The selected location is persisted and used for received files and saved text.
 - Replaced the partial-screen receive-folder dialog with a dedicated full-screen picker; removed its redundant title while keeping Cancel, Select This Folder, and back navigation.
 - Updated received-file handling to work with the configured receive location. Received APKs launch Android's package installer; Android 8 and later use the required unknown-source install permission flow.
-- Fixed the receive-folder picker crash on Android 2.3/API 10 caused by calling the unavailable `TextView.getMinWidth()` method.
 
 #### Windows installer (1.0.0 → 1.0.2)
 

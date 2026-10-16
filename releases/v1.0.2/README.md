@@ -9,7 +9,6 @@ Changes since Android APK 1.0.1 and Windows installer 1.0.0.
 - Added an expandable selected-files panel for reviewing and clearing the send queue. Newly selected files append without replacing existing selections.
 - Added a receive-location card and full-screen folder picker. The chosen destination is saved and used for incoming files and text.
 - Updated received-file handling to use the configured destination. Received APKs now open in Android's package installer, with the required install-permission flow on Android 8 and later.
-- Fixed a receive-folder picker crash on Android 2.3/API 10 caused by the unavailable `TextView.getMinWidth()` method.
 
 ### Windows installer (1.0.0 → 1.0.2)
 
