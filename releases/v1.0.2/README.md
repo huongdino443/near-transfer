@@ -1,14 +1,24 @@
 # Near Transfer 1.0.2
 
-Gói phát hành liên nền tảng gồm Android và Windows, được public chung trong release `v1.0.2`.
+Changes since Android APK 1.0.1 and Windows installer 1.0.0.
 
-## Release files
+## Changes
 
-- `Near-Transfer-1.0.2.apk` — APK Android đã ký; Android 2.3/API 9 trở lên.
-- `v1.0.2-NearTransfer-Windows-Setup.exe` — bộ cài Windows x86/x64; Windows 7 SP1 trở lên.
-- `CHANGELOG.md` — thay đổi của cả hai phiên bản.
-- `SHA256SUMS.txt` — SHA-256 của các tệp phát hành.
+### Android APK (1.0.1 → 1.0.2)
 
-APK đã ký; không bao gồm APK unsigned hoặc khóa ký riêng. Bộ cài Windows chưa ký mã, nên SmartScreen có thể cảnh báo. Nếu thiếu .NET Framework 4.8, bộ cài sẽ tải runtime từ Microsoft.
+- Added an expandable selected-files panel for reviewing and clearing the send queue. Newly selected files append without replacing existing selections.
+- Added a receive-location card and full-screen folder picker. The chosen destination is saved and used for incoming files and text.
+- Updated received-file handling to use the configured destination. Received APKs now open in Android's package installer, with the required install-permission flow on Android 8 and later.
+- Fixed a receive-folder picker crash on Android 2.3/API 10 caused by the unavailable `TextView.getMinWidth()` method.
 
-Giao thức truyền dữ liệu dùng HTTP không mã hóa trên mạng nội bộ. Chỉ sử dụng trên mạng đáng tin cậy.
+### Windows installer (1.0.0 → 1.0.2)
+
+- Moved initial receive-folder selection into the installer so the app is ready to use on first launch. Changes made later in the app are preserved.
+- Updated the Windows application and installer version metadata to 1.0.2.
+
+## Compatibility
+
+- Android: Android 2.3 (API 9) or later.
+- Windows: Windows 7 SP1 or later, x86 or x64. The installer downloads .NET Framework 4.8 from Microsoft if it is not already installed.
+
+See [CHANGELOG.md](CHANGELOG.md) for the detailed change list.
