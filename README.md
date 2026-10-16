@@ -84,13 +84,8 @@ versions, but those versions are not official releases.
 
 Copyright (c) 2026 Near Transfer.
 
-The app in v1.0.0 is also offered under GPL-3.0-or-later, alongside the
-original MIT grant. Its MIT notice is kept in
-[`licenses/v1.0.0/LICENSE-MIT.txt`](licenses/v1.0.0/LICENSE-MIT.txt);
-recipients who received v1.0.0 under MIT retain the rights already granted.
+Near Transfer is licensed under GPL-3.0-or-later. See [`LICENSE`](LICENSE).
 
-The app code on the main branch and in releases after v1.0.0 uses
-GPL-3.0-or-later only; later releases are not offered under MIT. See
-[`LICENSE`](LICENSE). The Gradle Wrapper scripts and JAR remain under
-Apache-2.0; see [`LICENSE-APACHE-2.0`](LICENSE-APACHE-2.0). That license applies
-to the build tools, not the app.
+The Gradle Wrapper scripts and JAR are licensed under Apache-2.0. See
+[`LICENSE-APACHE-2.0`](LICENSE-APACHE-2.0). This applies to the build tools,
+not the app.
